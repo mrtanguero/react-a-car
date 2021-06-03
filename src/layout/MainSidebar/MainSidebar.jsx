@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Menu, Layout } from "antd";
 import { CalendarOutlined, CarOutlined, UserOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
@@ -6,8 +6,21 @@ import { Link } from "react-router-dom";
 const { Sider } = Layout;
 
 export default function MainSidebar() {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const onCollapse = (collapsed) => {
+    setCollapsed(collapsed);
+  };
+
   return (
-    <Sider width={200} className="site-layout-background">
+    <Sider
+      breakpoint="lg"
+      onBreakpoint={onCollapse}
+      collapsible
+      collapsed={collapsed}
+      onCollapse={onCollapse}
+      // trigger={null}
+    >
       <Menu
         mode="inline"
         defaultSelectedKeys={["1"]}

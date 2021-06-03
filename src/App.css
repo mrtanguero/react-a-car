@@ -16,6 +16,10 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
+.ant-menu-root.ant-menu-horizontal {
+  float: right;
+}
+
 .ant-layout-has-sider {
   flex-grow: 1;
 }
