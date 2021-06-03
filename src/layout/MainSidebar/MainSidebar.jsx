@@ -14,12 +14,11 @@ export default function MainSidebar() {
 
   return (
     <Sider
-      breakpoint="lg"
-      onBreakpoint={onCollapse}
       collapsible
       collapsed={collapsed}
       onCollapse={onCollapse}
-      // trigger={null}
+      breakpoint="lg"
+      onBreakpoint={onCollapse}
     >
       <Menu
         mode="inline"
