@@ -24,9 +24,9 @@ export default function MainLayout({ children }) {
           >
             {children}
           </Content>
-          <MainFooter />
         </Layout>
       </Layout>
+      <MainFooter />
     </Layout>
   );
 }
