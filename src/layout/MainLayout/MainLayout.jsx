@@ -19,7 +19,6 @@ export default function MainLayout({ children }) {
             style={{
               padding: 24,
               margin: 0,
-              minHeight: 280,
             }}
           >
             {children}
