@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import "./App.css";
+import { Modal } from "antd";
 import "antd/dist/antd.css";
+import "./App.css";
+import modalContext from "./context/modalContext";
 
 import MainLayout from "./layout/MainLayout/MainLayout";
 import ClientsPage from "./pages/ClientsPage/ClientsPage";
@@ -10,6 +12,8 @@ import CreateReservationPage from "./pages/CreateReservationPage/CreateReservati
 import ReservationsPage from "./pages/ReservationsPage/ReservationsPage";
 
 const App = () => {
+  const modalCtx = useContext(modalContext);
+
   return (
     <MainLayout>
       <Switch>
@@ -29,6 +33,7 @@ const App = () => {
           <ReservationsPage />
         </Route>
       </Switch>
+      <Modal {...modalCtx.modalProps} />
     </MainLayout>
   );
 };
