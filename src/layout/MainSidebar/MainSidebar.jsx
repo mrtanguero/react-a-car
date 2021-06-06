@@ -1,15 +1,31 @@
-import React, { useState } from "react";
-import { Menu, Layout } from "antd";
-import { CalendarOutlined, CarOutlined, UserOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Menu, Layout } from 'antd';
+import { CalendarOutlined, CarOutlined, UserOutlined } from '@ant-design/icons';
+import { Link, useLocation } from 'react-router-dom';
 
 const { Sider } = Layout;
 
 export default function MainSidebar() {
+  const { pathname } = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [currentSide, setCurrentSide] = useState(null);
 
-  // TODO: Ovo bi trebalo možda izdići u App ili neki kontekst?
-  const [currentSide, setCurrentSide] = useState("clients");
+  useEffect(() => {
+    switch (pathname.split('/')[1]) {
+      case 'clients':
+        setCurrentSide('clients');
+        break;
+      case 'cars':
+        setCurrentSide('cars');
+        break;
+      case 'reservations':
+        setCurrentSide('reservations');
+        break;
+      default:
+        setCurrentSide(null);
+        break;
+    }
+  }, [pathname]);
 
   const handleClick = (e) => {
     setCurrentSide(e.key);
@@ -29,9 +45,9 @@ export default function MainSidebar() {
     >
       <Menu
         mode="inline"
-        defaultSelectedKeys={[currentSide]}
+        selectedKeys={[currentSide]}
         onClick={handleClick}
-        style={{ height: "100%", borderRight: 0 }}
+        style={{ height: '100%', borderRight: 0 }}
       >
         <Menu.Item key="clients" icon={<UserOutlined />}>
           <Link to="/clients">Klijenti</Link>

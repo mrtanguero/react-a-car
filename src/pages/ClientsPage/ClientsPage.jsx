@@ -1,8 +1,8 @@
-import { Button } from "antd";
-import React, { useContext } from "react";
-import modalContext from "../../context/modalContext";
-import { UserAddOutlined } from "@ant-design/icons";
-import NewClientForm from "../../components/NewClientForm/NewClientForm";
+import { Button, PageHeader } from 'antd';
+import React, { useContext } from 'react';
+import modalContext from '../../context/modalContext';
+import { UserAddOutlined } from '@ant-design/icons';
+import NewClientForm from '../../components/NewClientForm/NewClientForm';
 
 export default function ClientsPage() {
   const modalCtx = useContext(modalContext);
@@ -14,7 +14,7 @@ export default function ClientsPage() {
   const handleClick = () => {
     modalCtx.setModalProps({
       visible: true,
-      title: "Dodaj novog korisnika",
+      title: 'Dodaj novog korisnika',
       children: <NewClientForm />,
       onOk: () => {},
       onCancel: handleCancelModal,
@@ -22,12 +22,17 @@ export default function ClientsPage() {
   };
 
   return (
-    <div>
-      This is Clients Page.{" "}
-      <Button onClick={handleClick}>
-        <UserAddOutlined />
-        Dodaj klijenta
-      </Button>
-    </div>
+    <>
+      <PageHeader
+        ghost={true}
+        title="Klijenti"
+        extra={
+          <Button onClick={handleClick}>
+            <UserAddOutlined />
+            Dodaj klijenta
+          </Button>
+        }
+      />
+    </>
   );
 }

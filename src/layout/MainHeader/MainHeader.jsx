@@ -1,23 +1,46 @@
-import React, { useContext, useState } from "react";
-import { Layout, Menu } from "antd";
-import { Link } from "react-router-dom";
-import modalContext from "../../context/modalContext";
-import NewCar from "../../components/NewCar/NewCar";
-import NewClientForm from "../../components/NewClientForm/NewClientForm";
+import React, { useContext, useEffect, useState } from 'react';
+import { Layout, Menu } from 'antd';
+import { Link, useLocation } from 'react-router-dom';
+import modalContext from '../../context/modalContext';
+import NewCar from '../../components/NewCar/NewCar';
+import NewClientForm from '../../components/NewClientForm/NewClientForm';
+import MNEFlag from '../../components/MNEFlag/MNEFlag';
+import GBFlag from '../../components/GBFlag/GBFlag';
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
 
 export default function MainHeader() {
-  const [currentMain, setCurrentMain] = useState("home");
+  const [currentMain, setCurrentMain] = useState([null, 'locale:me']);
+  const { pathname } = useLocation();
   const modalCtx = useContext(modalContext);
 
-  // TODO: Možda ovo podići u App ili u neki kontekst?
+  useEffect(() => {
+    switch (pathname) {
+      case '/':
+        setCurrentMain((current) => ['home', current[1]]);
+        break;
+      case '/reservations/create':
+        setCurrentMain((current) => ['create:reservation', current[1]]);
+        break;
+      case '/login':
+        setCurrentMain((current) => ['login', current[1]]);
+        break;
+      default:
+        setCurrentMain((current) => [null, current[1]]);
+        break;
+    }
+  }, [pathname]);
+
   const handleClick = (e) => {
-    if (e.key === "create:car" || e.key === "create:client") {
+    if (e.key === 'create:car' || e.key === 'create:client') {
       return;
     }
-    setCurrentMain(e.key);
+    if (e.key.split(':')[0] === 'locale') {
+      setCurrentMain((current) => [current[0], e.key]);
+    } else {
+      setCurrentMain((current) => [e.key, current[1]]);
+    }
   };
 
   const handleCancelModal = () => {
@@ -26,7 +49,7 @@ export default function MainHeader() {
 
   const handleClickAddCar = () => {
     modalCtx.setModalProps({
-      title: "Add new car",
+      title: 'Add new car',
       children: <NewCar />,
       visible: true,
       onOk: () => {},
@@ -38,7 +61,7 @@ export default function MainHeader() {
   const handleClickAddClient = () => {
     modalCtx.setModalProps({
       visible: true,
-      title: "Dodaj novog korisnika",
+      title: 'Dodaj novog korisnika',
       children: <NewClientForm />,
       onOk: () => {},
       onCancel: handleCancelModal,
@@ -52,9 +75,11 @@ export default function MainHeader() {
         theme="dark"
         mode="horizontal"
         onClick={handleClick}
-        selectedKeys={[currentMain]}
+        selectedKeys={currentMain}
       >
-        <Menu.Item key="home">Početna</Menu.Item>
+        <Menu.Item key="home">
+          <Link to="/">Početna</Link>
+        </Menu.Item>
         <SubMenu key="create" title="Dodaj">
           <Menu.Item key="create:client" onClick={handleClickAddClient}>
             Novog klijenta
@@ -66,9 +91,12 @@ export default function MainHeader() {
             <Link to="/reservations/create">Novu rezervaciju</Link>
           </Menu.Item>
         </SubMenu>
-        <SubMenu key="locale" title="Jezik">
-          <Menu.Item key="locale:me">MNE</Menu.Item>
-          <Menu.Item key="locale:eng">ENG</Menu.Item>
+        <SubMenu
+          key="locale"
+          title={currentMain[1] === 'locale:me' ? <MNEFlag /> : <GBFlag />}
+        >
+          <Menu.Item key="locale:me">Crnogorski (ME)</Menu.Item>
+          <Menu.Item key="locale:eng">English (GB)</Menu.Item>
         </SubMenu>
         <Menu.Item key="logout">Logout</Menu.Item>
       </Menu>

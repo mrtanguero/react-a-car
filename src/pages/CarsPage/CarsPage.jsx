@@ -1,8 +1,8 @@
-import { Button } from "antd";
-import React, { useContext } from "react";
-import modalContext from "../../context/modalContext";
-import { CarOutlined } from "@ant-design/icons";
-import NewCar from "../../components/NewCar/NewCar";
+import React, { useContext } from 'react';
+import { Button, PageHeader } from 'antd';
+import { CarOutlined } from '@ant-design/icons';
+import modalContext from '../../context/modalContext';
+import NewCar from '../../components/NewCar/NewCar';
 
 export default function ClientsPage() {
   const modalCtx = useContext(modalContext);
@@ -13,7 +13,7 @@ export default function ClientsPage() {
 
   const handleClick = () => {
     modalCtx.setModalProps({
-      title: "Add new car",
+      title: 'Add new car',
       children: <NewCar />,
       visible: true,
       onOk: () => {},
@@ -23,12 +23,17 @@ export default function ClientsPage() {
   };
 
   return (
-    <div>
-      This is Clients Page.{" "}
-      <Button onClick={handleClick}>
-        <CarOutlined />
-        Dodaj vozilo
-      </Button>
-    </div>
+    <>
+      <PageHeader
+        ghost={true}
+        title="Vozila"
+        extra={
+          <Button onClick={handleClick}>
+            <CarOutlined />
+            Dodaj vozilo
+          </Button>
+        }
+      />
+    </>
   );
 }
