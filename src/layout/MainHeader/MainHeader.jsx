@@ -8,11 +8,12 @@ import modalContext from '../../context/modalContext';
 import NewClientForm from '../../components/NewClientForm/NewClientForm';
 import MNEFlag from '../../components/MNEFlag/MNEFlag';
 import GBFlag from '../../components/GBFlag/GBFlag';
+import { MenuOutlined } from '@ant-design/icons';
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
 
-export default function MainHeader() {
+export default function MainHeader({ drawerIsVisible, setDrawerIsVisible }) {
   const [currentMain, setCurrentMain] = useState([null, 'locale:me']);
   const { pathname } = useLocation();
   const { t, i18n } = useTranslation();
@@ -36,7 +37,11 @@ export default function MainHeader() {
   }, [pathname]);
 
   const handleClick = (e) => {
-    if (e.key === 'create:car' || e.key === 'create:client') {
+    if (
+      e.key === 'create:car' ||
+      e.key === 'create:client' ||
+      e.key === 'menu-icon'
+    ) {
       return;
     }
     if (e.key.split(':')[0] === 'locale') {
@@ -80,11 +85,17 @@ export default function MainHeader() {
         mode="horizontal"
         onClick={handleClick}
         selectedKeys={currentMain}
+        disabledOverflow={true}
+        className="main-header-menu"
       >
-        <Menu.Item key="home">
+        <Menu.Item key="home" className="main-header-home">
           <Link to="/">{t('navigation.home')}</Link>
         </Menu.Item>
-        <SubMenu key="create" title={t('navigation.addNew')}>
+        <SubMenu
+          key="create"
+          title={t('navigation.addNew')}
+          className="main-header-create-submenu"
+        >
           <Menu.Item key="create:client" onClick={handleClickAddClient}>
             {t('navigation.addNewClient')}
           </Menu.Item>
@@ -104,7 +115,16 @@ export default function MainHeader() {
           <Menu.Item key="locale:me">[ME] Crnogorski</Menu.Item>
           <Menu.Item key="locale:en">[EN] English</Menu.Item>
         </SubMenu>
-        <Menu.Item key="logout">Logout</Menu.Item>
+        <Menu.Item key="logout" className="main-header-logout">
+          Logout
+        </Menu.Item>
+        <Menu.Item
+          key="menu-icon"
+          className="hamburger-menu"
+          onClick={() => setDrawerIsVisible(!drawerIsVisible)}
+        >
+          <MenuOutlined />
+        </Menu.Item>
       </Menu>
     </Header>
   );

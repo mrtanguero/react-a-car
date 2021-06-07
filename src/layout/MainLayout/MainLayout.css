@@ -1,0 +1,35 @@
+.main-drawer .ant-drawer-wrapper-body {
+  background-color: #001529;
+}
+
+.main-drawer .ant-drawer-body {
+  padding: 64px 0 0 0;
+}
+
+.main-header-menu {
+  min-width: 126px !important;
+  height: 64px;
+}
+
+@media only screen and (min-width: 768px) {
+  .ant-menu-root .hamburger-menu,
+  .main-drawer {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .main-header-menu {
+    display: block !important;
+    z-index: 9999 !important;
+  }
+
+  aside.ant-layout-sider {
+    display: none;
+  }
+  .main-header-home,
+  .main-header-create-submenu,
+  .main-header-logout {
+    display: none !important;
+  }
+}
