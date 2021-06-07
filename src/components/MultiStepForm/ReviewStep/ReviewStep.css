@@ -1,0 +1,9 @@
+.preview-group-container {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 10px;
+}
+
+.preview-group-container img {
+  object-fit: contain;
+}

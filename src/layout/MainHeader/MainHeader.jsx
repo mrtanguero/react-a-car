@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Layout, Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
+import NewCarContainer from '../../components/NewCarContainer/NewCarContainer';
 import modalContext from '../../context/modalContext';
-import NewCar from '../../components/NewCar/NewCar';
 import NewClientForm from '../../components/NewClientForm/NewClientForm';
 import MNEFlag from '../../components/MNEFlag/MNEFlag';
 import GBFlag from '../../components/GBFlag/GBFlag';
@@ -49,8 +49,8 @@ export default function MainHeader() {
 
   const handleClickAddCar = () => {
     modalCtx.setModalProps({
-      title: 'Add new car',
-      children: <NewCar />,
+      title: 'Dodaj novo vozilo',
+      children: <NewCarContainer />,
       visible: true,
       onOk: () => {},
       onCancel: handleCancelModal,
