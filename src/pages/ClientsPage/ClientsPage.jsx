@@ -1,11 +1,13 @@
 import { Button, PageHeader } from 'antd';
 import React, { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import modalContext from '../../context/modalContext';
 import { UserAddOutlined } from '@ant-design/icons';
 import NewClientForm from '../../components/NewClientForm/NewClientForm';
 
 export default function ClientsPage() {
   const modalCtx = useContext(modalContext);
+  const { t } = useTranslation();
 
   const handleCancelModal = () => {
     modalCtx.setModalProps({ ...modalCtx.modalProps, visible: false });
@@ -14,7 +16,7 @@ export default function ClientsPage() {
   const handleClick = () => {
     modalCtx.setModalProps({
       visible: true,
-      title: 'Dodaj novog korisnika',
+      title: t('modals.newClient'),
       children: <NewClientForm />,
       onOk: () => {},
       onCancel: handleCancelModal,
@@ -25,11 +27,11 @@ export default function ClientsPage() {
     <>
       <PageHeader
         ghost={true}
-        title="Klijenti"
+        title={t('navigation.clients')}
         extra={
           <Button onClick={handleClick}>
             <UserAddOutlined />
-            Dodaj klijenta
+            {t('buttons.newClient')}
           </Button>
         }
       />

@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Layout, Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
 import NewCarContainer from '../../components/NewCarContainer/NewCarContainer';
 import modalContext from '../../context/modalContext';
 import NewClientForm from '../../components/NewClientForm/NewClientForm';
@@ -13,6 +15,7 @@ const { Header } = Layout;
 export default function MainHeader() {
   const [currentMain, setCurrentMain] = useState([null, 'locale:me']);
   const { pathname } = useLocation();
+  const { t, i18n } = useTranslation();
   const modalCtx = useContext(modalContext);
 
   useEffect(() => {
@@ -37,6 +40,7 @@ export default function MainHeader() {
       return;
     }
     if (e.key.split(':')[0] === 'locale') {
+      i18n.changeLanguage(e.key.split(':')[1]);
       setCurrentMain((current) => [current[0], e.key]);
     } else {
       setCurrentMain((current) => [e.key, current[1]]);
@@ -49,7 +53,7 @@ export default function MainHeader() {
 
   const handleClickAddCar = () => {
     modalCtx.setModalProps({
-      title: 'Dodaj novo vozilo',
+      title: t('modals.newCar'),
       children: <NewCarContainer />,
       visible: true,
       onOk: () => {},
@@ -61,7 +65,7 @@ export default function MainHeader() {
   const handleClickAddClient = () => {
     modalCtx.setModalProps({
       visible: true,
-      title: 'Dodaj novog korisnika',
+      title: t('modals.newClient'),
       children: <NewClientForm />,
       onOk: () => {},
       onCancel: handleCancelModal,
@@ -78,25 +82,27 @@ export default function MainHeader() {
         selectedKeys={currentMain}
       >
         <Menu.Item key="home">
-          <Link to="/">Početna</Link>
+          <Link to="/">{t('navigation.home')}</Link>
         </Menu.Item>
-        <SubMenu key="create" title="Dodaj">
+        <SubMenu key="create" title={t('navigation.addNew')}>
           <Menu.Item key="create:client" onClick={handleClickAddClient}>
-            Novog klijenta
+            {t('navigation.addNewClient')}
           </Menu.Item>
           <Menu.Item key="create:car" onClick={handleClickAddCar}>
-            Novo vozilo
+            {t('navigation.addNewCar')}
           </Menu.Item>
           <Menu.Item key="create:reservation">
-            <Link to="/reservations/create">Novu rezervaciju</Link>
+            <Link to="/reservations/create">
+              {t('navigation.addNewReservation')}
+            </Link>
           </Menu.Item>
         </SubMenu>
         <SubMenu
           key="locale"
           title={currentMain[1] === 'locale:me' ? <MNEFlag /> : <GBFlag />}
         >
-          <Menu.Item key="locale:me">Crnogorski (ME)</Menu.Item>
-          <Menu.Item key="locale:eng">English (GB)</Menu.Item>
+          <Menu.Item key="locale:me">[ME] Crnogorski</Menu.Item>
+          <Menu.Item key="locale:en">[EN] English</Menu.Item>
         </SubMenu>
         <Menu.Item key="logout">Logout</Menu.Item>
       </Menu>

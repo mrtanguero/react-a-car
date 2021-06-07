@@ -1,10 +1,12 @@
 import { CalendarOutlined } from '@ant-design/icons';
 import { Button, PageHeader } from 'antd';
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { useHistory } from 'react-router';
 
 export default function ReservationsPage() {
   const history = useHistory();
+  const { t } = useTranslation();
 
   const handleClickNewReservation = () => {
     history.push('/reservations/create');
@@ -13,11 +15,11 @@ export default function ReservationsPage() {
   return (
     <>
       <PageHeader
-        title="Rezervacije"
+        title={t('navigation.reservations')}
         extra={
           <Button onClick={handleClickNewReservation}>
             <CalendarOutlined />
-            Dodaj rezervaciju
+            {t('buttons.newReservation')}
           </Button>
         }
       />

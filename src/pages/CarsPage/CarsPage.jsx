@@ -1,11 +1,13 @@
 import React, { useContext } from 'react';
 import { Button, PageHeader } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { CarOutlined } from '@ant-design/icons';
 import modalContext from '../../context/modalContext';
 import NewCarContainer from '../../components/NewCarContainer/NewCarContainer.jsx';
 
 export default function ClientsPage() {
   const modalCtx = useContext(modalContext);
+  const { t } = useTranslation();
 
   const handleCancelModal = () => {
     modalCtx.setModalProps({ ...modalCtx.modalProps, visible: false });
@@ -13,7 +15,7 @@ export default function ClientsPage() {
 
   const handleClick = () => {
     modalCtx.setModalProps({
-      title: 'Dodaj novo vozilo',
+      title: t('modals.newCar'),
       children: <NewCarContainer />,
       visible: true,
       onOk: () => {},
@@ -26,11 +28,11 @@ export default function ClientsPage() {
     <>
       <PageHeader
         ghost={true}
-        title="Vozila"
+        title={t('navigation.vehicles')}
         extra={
           <Button onClick={handleClick}>
             <CarOutlined />
-            Dodaj vozilo
+            {t('buttons.newCar')}
           </Button>
         }
       />
