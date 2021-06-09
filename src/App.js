@@ -11,27 +11,34 @@ import CarsPage from './pages/CarsPage/CarsPage';
 import CreateReservationPage from './pages/CreateReservationPage/CreateReservationPage';
 import ReservationsPage from './pages/ReservationsPage/ReservationsPage';
 import HomePage from './pages/HomePage/HomePage';
+import LoginForm from './components/LoginForm/LoginForm';
+import authContext from './context/authContext';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 const App = () => {
   const modalCtx = useContext(modalContext);
+  const auth = useContext(authContext);
 
   return (
     <MainLayout>
       <Switch>
-        <Route path="/" exact>
+        <ProtectedRoute jwt={auth.jwt} path="/" exact={true}>
           <HomePage />
-        </Route>
-        <Route path="/clients">
+        </ProtectedRoute>
+        <ProtectedRoute path="/clients">
           <ClientsPage />
-        </Route>
-        <Route path="/cars">
+        </ProtectedRoute>
+        <ProtectedRoute path="/cars">
           <CarsPage />
-        </Route>
-        <Route path="/reservations/create">
+        </ProtectedRoute>
+        <ProtectedRoute path="/reservations/create">
           <CreateReservationPage />
-        </Route>
-        <Route path="/reservations">
+        </ProtectedRoute>
+        <ProtectedRoute path="/reservations">
           <ReservationsPage />
+        </ProtectedRoute>
+        <Route path="/login">
+          <LoginForm />
         </Route>
       </Switch>
       <Modal {...modalCtx.modalProps} />

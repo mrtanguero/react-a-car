@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Button, PageHeader } from 'antd';
+import { Button, Card, PageHeader } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { CarOutlined } from '@ant-design/icons';
 import modalContext from '../../context/modalContext';
@@ -36,6 +36,7 @@ export default function ClientsPage() {
           </Button>
         }
       />
+      <Card>Ovdje sadržaj?</Card>
     </>
   );
 }

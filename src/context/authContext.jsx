@@ -1,26 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
+import { getAccount } from '../services/account';
+
+const getJWTFromLocalStorage = () => {
+  return localStorage.getItem('jwt');
+};
 
 const authContext = React.createContext({
   user: {},
-  jwToken: "",
-  setUser: (user) => {},
-  setJwToken: (jwToken) => {},
+  jwt: '',
+  setJwt: () => {},
 });
 
 export const AuthProvider = (props) => {
-  const [user, setUser] = useState({});
-  const [jwToken, setJwToken] = useState("");
+  const [jwt, setJwt] = useState(getJWTFromLocalStorage());
+  const [user, setUser] = useState(null);
 
-  // TODO: Kad bude API ovo pogledaj malo!
-  // useEffect(() => {
-  //   if (localStorage.getItem("user")) {
-  //     setUser(JSON.parse(localStorage.getItem("user")));
-  //     setJwToken(JSON.parse(localStorage.getItem("jwToken")));
-  //   }
-  // }, []);
+  const { data: response, isSuccess } = useQuery('account', getAccount, {
+    refetchOnWindowFocus: false,
+    enabled: !!jwt,
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      setUser({
+        name: response.data.name,
+        roleId: response.data.role_id,
+      });
+    }
+  }, [isSuccess, response.data]);
 
   return (
-    <authContext.Provider value={{ user, jwToken, setUser, setJwToken }}>
+    <authContext.Provider value={{ user, jwt, setJwt }}>
       {props.children}
     </authContext.Provider>
   );

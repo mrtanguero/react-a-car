@@ -1,14 +1,19 @@
-import React from "react";
-import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./authContext";
-import { ModalPropsProvider } from "./modalContext";
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './authContext';
+import { ModalPropsProvider } from './modalContext';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
-export default function AllProviders(props) {
+export default function AllProviders({ children }) {
+  const queryClient = new QueryClient();
+
   return (
-    <AuthProvider>
-      <ModalPropsProvider>
-        <BrowserRouter>{props.children}</BrowserRouter>
-      </ModalPropsProvider>
-    </AuthProvider>
+    <ModalPropsProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <BrowserRouter>{children}</BrowserRouter>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ModalPropsProvider>
   );
 }
