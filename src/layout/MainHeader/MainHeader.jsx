@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Layout, Menu } from 'antd';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import NewCarContainer from '../../components/NewCarContainer/NewCarContainer';
@@ -9,15 +9,23 @@ import NewClientForm from '../../components/NewClientForm/NewClientForm';
 import MNEFlag from '../../components/MNEFlag/MNEFlag';
 import GBFlag from '../../components/GBFlag/GBFlag';
 import { MenuOutlined } from '@ant-design/icons';
+import { logout } from '../../services/account';
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
 
-export default function MainHeader({ drawerIsVisible, setDrawerIsVisible }) {
+export default function MainHeader({
+  drawerIsVisible,
+  setDrawerIsVisible,
+  user,
+  setUser,
+  setJwt,
+}) {
   const [currentMain, setCurrentMain] = useState([null, 'locale:me']);
   const { pathname } = useLocation();
   const { t, i18n } = useTranslation();
   const modalCtx = useContext(modalContext);
+  const history = useHistory();
 
   useEffect(() => {
     switch (pathname) {
@@ -40,7 +48,8 @@ export default function MainHeader({ drawerIsVisible, setDrawerIsVisible }) {
     if (
       e.key === 'create:car' ||
       e.key === 'create:client' ||
-      e.key === 'menu-icon'
+      e.key === 'menu-icon' ||
+      e.key === 'logout'
     ) {
       return;
     }
@@ -77,6 +86,15 @@ export default function MainHeader({ drawerIsVisible, setDrawerIsVisible }) {
     });
   };
 
+  const handleLogout = () => {
+    logout().then(() => {
+      localStorage.removeItem('jwt');
+      setJwt(null);
+      setUser(null);
+      history.push('/login');
+    });
+  };
+
   return (
     <Header className="header">
       <div className="logo" />
@@ -88,26 +106,30 @@ export default function MainHeader({ drawerIsVisible, setDrawerIsVisible }) {
         disabledOverflow={true}
         className="main-header-menu"
       >
-        <Menu.Item key="home" className="main-header-home">
-          <Link to="/">{t('navigation.home')}</Link>
-        </Menu.Item>
-        <SubMenu
-          key="create"
-          title={t('navigation.addNew')}
-          className="main-header-create-submenu"
-        >
-          <Menu.Item key="create:client" onClick={handleClickAddClient}>
-            {t('navigation.addNewClient')}
-          </Menu.Item>
-          <Menu.Item key="create:car" onClick={handleClickAddCar}>
-            {t('navigation.addNewCar')}
-          </Menu.Item>
-          <Menu.Item key="create:reservation">
-            <Link to="/reservations/create">
-              {t('navigation.addNewReservation')}
-            </Link>
-          </Menu.Item>
-        </SubMenu>
+        {user && (
+          <>
+            <Menu.Item key="home" className="main-header-home">
+              <Link to="/">{t('navigation.home')}</Link>
+            </Menu.Item>
+            <SubMenu
+              key="create"
+              title={t('navigation.addNew')}
+              className="main-header-create-submenu"
+            >
+              <Menu.Item key="create:client" onClick={handleClickAddClient}>
+                {t('navigation.addNewClient')}
+              </Menu.Item>
+              <Menu.Item key="create:car" onClick={handleClickAddCar}>
+                {t('navigation.addNewCar')}
+              </Menu.Item>
+              <Menu.Item key="create:reservation">
+                <Link to="/reservations/create">
+                  {t('navigation.addNewReservation')}
+                </Link>
+              </Menu.Item>
+            </SubMenu>
+          </>
+        )}
         <SubMenu
           key="locale"
           title={currentMain[1] === 'locale:me' ? <MNEFlag /> : <GBFlag />}
@@ -115,16 +137,29 @@ export default function MainHeader({ drawerIsVisible, setDrawerIsVisible }) {
           <Menu.Item key="locale:me">[ME] Crnogorski</Menu.Item>
           <Menu.Item key="locale:en">[EN] English</Menu.Item>
         </SubMenu>
-        <Menu.Item key="logout" className="main-header-logout">
-          Logout
-        </Menu.Item>
-        <Menu.Item
-          key="menu-icon"
-          className="hamburger-menu"
-          onClick={() => setDrawerIsVisible(!drawerIsVisible)}
-        >
-          <MenuOutlined />
-        </Menu.Item>
+        {user && (
+          <>
+            <SubMenu key="user" className="main-header-user" title={user?.name?.split(' ')[0]}>
+              <Menu.Item key="user:password-change">
+                Promijeni lozinku
+              </Menu.Item>
+              <Menu.Item
+                key="logout"
+                className="main-header-logout"
+                onClick={handleLogout}
+              >
+                Logout
+              </Menu.Item>
+            </SubMenu>
+            <Menu.Item
+              key="menu-icon"
+              className="hamburger-menu"
+              onClick={() => setDrawerIsVisible(!drawerIsVisible)}
+            >
+              <MenuOutlined />
+            </Menu.Item>
+          </>
+        )}
       </Menu>
     </Header>
   );

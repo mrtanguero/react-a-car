@@ -5,6 +5,29 @@ import { CarOutlined } from '@ant-design/icons';
 import modalContext from '../../context/modalContext';
 import NewCarContainer from '../../components/NewCarContainer/NewCarContainer.jsx';
 
+// const columns = [
+//   {
+//     title: 'Licence plate',
+//     dataIndex: 'plate_no',
+//     key: 'plates',
+//   },
+//   {
+//     title: 'Year',
+//     dataIndex: 'production_year',
+//     key: 'year',
+//   },
+//   {
+//     title: 'Seats',
+//     dataIndex: 'no_of_seats',
+//     key: 'seats',
+//   },
+//   {
+//     title: 'Price per day',
+//     dataIndex: 'price_per_day',
+//     key: 'price',
+//   },
+// ];
+
 export default function ClientsPage() {
   const modalCtx = useContext(modalContext);
   const { t } = useTranslation();

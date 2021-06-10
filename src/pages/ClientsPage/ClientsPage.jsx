@@ -1,38 +1,72 @@
-import { Button, PageHeader, Table } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
+import { Button, Card, PageHeader, Space, Table } from 'antd';
+import React, { useContext, useRef } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import modalContext from '../../context/modalContext';
-import { UserAddOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  UserAddOutlined,
+} from '@ant-design/icons';
 import NewClientForm from '../../components/NewClientForm/NewClientForm';
 import { getClients } from '../../services/clients';
+import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 
 const columns = [
   {
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
+    width: 180,
   },
   {
     title: 'Country',
     dataIndex: ['country', 'name'],
     key: 'country',
+    width: 150,
   },
   {
     title: 'ID document number',
-    dataIndex: 'id_document_number',
+    dataIndex: 'identification_document_no',
     key: 'document-id',
+    width: 150,
+    ellipsis: true,
   },
   {
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
+    width: 200,
+  },
+  {
+    title: 'Phone',
+    dataIndex: 'phone_no',
+    key: 'phone',
+    width: 150,
+  },
+  {
+    title: 'Actions',
+    key: 'action',
+    align: 'center',
+    width: 100,
+    fixed: 'right',
+    render: (_, record) => (
+      <Space size="small">
+        <Button
+          icon={<EditOutlined />}
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log(record.id);
+          }}
+        />
+        <Button icon={<DeleteOutlined />} danger />
+      </Space>
+    ),
   },
 ];
 
 export default function ClientsPage() {
   const modalCtx = useContext(modalContext);
-  const [allData, setAllData] = useState([]);
   const { t } = useTranslation();
 
   const {
@@ -42,27 +76,26 @@ export default function ClientsPage() {
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    status,
   } = useInfiniteQuery('clients', getClients, {
     getNextPageParam: (lastPage, pages) => {
-      console.log('Last page: ', lastPage);
-      console.log('Returning...', lastPage.data.current_page);
-      return lastPage.data.current_page + 1;
+      const isLastPage = lastPage.data.current_page === lastPage.data.last_page;
+      return isLastPage ? false : lastPage.data.current_page + 1;
     },
+    refetchOnWindowFocus: false,
+    // onSuccess: () => console.log('Response: ', response),
   });
 
-  useEffect(() => {
-    if (status === 'success') {
-      setAllData((oldData) => [
-        ...oldData,
-        ...response.pages[response.pages.length - 1].data.data,
-      ]);
-    }
-  }, [status, response?.pages]);
+  const loadMoreRef = useRef();
 
   const handleCancelModal = () => {
     modalCtx.setModalProps({ ...modalCtx.modalProps, visible: false });
   };
+
+  useIntersectionObserver({
+    target: loadMoreRef,
+    onIntersect: fetchNextPage,
+    enabled: hasNextPage,
+  });
 
   const handleClick = () => {
     modalCtx.setModalProps({
@@ -75,17 +108,6 @@ export default function ClientsPage() {
   };
 
   if (error) console.log(error.response);
-  if (status === 'success') {
-    console.log('Object returned from useInfQuery: ', {
-      response,
-      error,
-      fetchNextPage,
-      hasNextPage,
-      isFetching,
-      isFetchingNextPage,
-      status,
-    });
-  }
 
   return (
     <>
@@ -99,35 +121,50 @@ export default function ClientsPage() {
           </Button>
         }
       />
-      {/* <Card> */}
-      <Table
-        loading={isFetching}
-        columns={columns}
-        // dataSource={response?.pages[0].data.data}
-        dataSource={allData || []}
-        rowKey={(record) => record.id}
-        pagination={false}
-        scroll={{ y: '400px' }}
-        size="middle"
-        footer={() => (
-          <Button
-            onClick={() => fetchNextPage()}
-            disabled={!hasNextPage || isFetchingNextPage}
-          >
-            {isFetchingNextPage
-              ? 'Loading more...'
-              : hasNextPage
-              ? 'Load More'
-              : 'Nothing more to load'}
-          </Button>
-        )}
-        onRow={(record) => {
-          return {
-            onClick: () => console.log(record),
-          };
-        }}
-      />
-      {/* </Card> */}
+      <Card>
+        <Table
+          loading={!response?.pages.length && isFetching}
+          columns={columns}
+          dataSource={
+            [].concat.apply(
+              [],
+              response?.pages.map((page) => page.data.data)
+            ) || []
+          }
+          rowKey={(record) => record.id}
+          pagination={false}
+          scroll={{ x: '100%', y: '400px' }}
+          size="small"
+          footer={() => (
+            <Button
+              onClick={() => fetchNextPage()}
+              disabled={!hasNextPage || isFetchingNextPage}
+            >
+              {isFetchingNextPage
+                ? 'Loading more...'
+                : hasNextPage
+                ? 'Load More'
+                : 'Nothing more to load'}
+            </Button>
+          )}
+          onRow={(record, index) => {
+            return {
+              onClick: () => {
+                console.log('Ref bound to: ', loadMoreRef.current);
+              },
+              ref:
+                index ===
+                response.pages.reduce(
+                  (sum, cur) => sum + cur.data.data.length,
+                  0
+                ) -
+                  1
+                  ? loadMoreRef
+                  : null,
+            };
+          }}
+        />
+      </Card>
     </>
   );
 }

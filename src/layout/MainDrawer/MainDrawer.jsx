@@ -3,22 +3,33 @@ import {
   CalendarOutlined,
   CarOutlined,
   HomeOutlined,
+  LockOutlined,
   LogoutOutlined,
   PlusOutlined,
+  ProfileOutlined,
+  UserAddOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { Drawer, Menu } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import modalContext from '../../context/modalContext';
 import NewCarContainer from '../../components/NewCarContainer/NewCarContainer';
 import NewClientForm from '../../components/NewClientForm/NewClientForm';
+import { logout } from '../../services/account';
 
 const { SubMenu } = Menu;
 
-export default function MainDrawer({ drawerIsVisible, setDrawerIsVisible }) {
+export default function MainDrawer({
+  drawerIsVisible,
+  setDrawerIsVisible,
+  user,
+  setUser,
+  setJwt,
+}) {
   const [currentDrawer, setCurrentDrawer] = useState(['home']);
   const modalCtx = useContext(modalContext);
+  const history = useHistory();
   const { t } = useTranslation();
 
   const handleCloseDrawer = () => {
@@ -55,6 +66,15 @@ export default function MainDrawer({ drawerIsVisible, setDrawerIsVisible }) {
     });
   };
 
+  const handleLogout = () => {
+    logout().then(() => {
+      localStorage.removeItem('jwt');
+      setJwt(null);
+      setUser(null);
+      history.push('/login');
+    });
+  };
+
   return (
     <Drawer
       className="main-drawer"
@@ -87,21 +107,42 @@ export default function MainDrawer({ drawerIsVisible, setDrawerIsVisible }) {
           icon={<PlusOutlined />}
           title={t('navigation.addNew')}
         >
-          <Menu.Item key="create:client" onClick={handleClickAddClient}>
+          <Menu.Item
+            key="create:client"
+            icon={<UserAddOutlined />}
+            onClick={handleClickAddClient}
+          >
             {t('navigation.addNewClient')}
           </Menu.Item>
-          <Menu.Item key="create:car" onClick={handleClickAddCar}>
+          <Menu.Item
+            key="create:car"
+            icon={<CarOutlined />}
+            onClick={handleClickAddCar}
+          >
             {t('navigation.addNewCar')}
           </Menu.Item>
-          <Menu.Item key="create:reservation">
+          <Menu.Item key="create:reservation" icon={<CalendarOutlined />}>
             <Link to="/reservations/create">
               {t('navigation.addNewReservation')}
             </Link>
           </Menu.Item>
         </SubMenu>
-        <Menu.Item key="logout" icon={<LogoutOutlined />}>
-          Logout
-        </Menu.Item>
+        <SubMenu
+          key="user"
+          icon={<ProfileOutlined />}
+          title={user?.name?.split(' ')[0]}
+        >
+          <Menu.Item icon={<LockOutlined />} key="user:password-change">
+            Promijeni lozinku
+          </Menu.Item>
+          <Menu.Item
+            key="logout"
+            icon={<LogoutOutlined />}
+            onClick={handleLogout}
+          >
+            Logout
+          </Menu.Item>
+        </SubMenu>
       </Menu>
     </Drawer>
   );

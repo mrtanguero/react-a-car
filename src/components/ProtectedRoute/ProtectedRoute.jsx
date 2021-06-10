@@ -1,11 +1,11 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router';
 
-export default function PrivateRoute({ jwt, path, children, ...otherProps }) {
+export default function PrivateRoute({ jwt, path, exact, children }) {
   return (
     <>
       {jwt ? (
-        <Route path={path} {...otherProps}>
+        <Route path={path} exact={exact}>
           {children}
         </Route>
       ) : (

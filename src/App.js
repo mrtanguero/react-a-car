@@ -25,16 +25,16 @@ const App = () => {
         <ProtectedRoute jwt={auth.jwt} path="/" exact={true}>
           <HomePage />
         </ProtectedRoute>
-        <ProtectedRoute path="/clients">
+        <ProtectedRoute jwt={auth.jwt} path="/clients">
           <ClientsPage />
         </ProtectedRoute>
-        <ProtectedRoute path="/cars">
+        <ProtectedRoute jwt={auth.jwt} path="/cars">
           <CarsPage />
         </ProtectedRoute>
-        <ProtectedRoute path="/reservations/create">
+        <ProtectedRoute jwt={auth.jwt} path="/reservations/create">
           <CreateReservationPage />
         </ProtectedRoute>
-        <ProtectedRoute path="/reservations">
+        <ProtectedRoute jwt={auth.jwt} path="/reservations">
           <ReservationsPage />
         </ProtectedRoute>
         <Route path="/login">
