@@ -1,5 +1,5 @@
-import { Button, Card, PageHeader, Space, Table } from 'antd';
-import React, { useContext, useRef } from 'react';
+import { Button, Card, PageHeader, Space, Spin, Table } from 'antd';
+import React, { useContext, useState } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import modalContext from '../../context/modalContext';
@@ -11,6 +11,7 @@ import {
 import NewClientForm from '../../components/NewClientForm/NewClientForm';
 import { getClients } from '../../services/clients';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
+import { totalCurrentLength } from '../../helper/functions';
 
 const columns = [
   {
@@ -67,6 +68,9 @@ const columns = [
 
 export default function ClientsPage() {
   const modalCtx = useContext(modalContext);
+  const [intersectionObserverTarget, setIntersectionObserverTarget] = useState(
+    null
+  );
   const { t } = useTranslation();
 
   const {
@@ -82,20 +86,17 @@ export default function ClientsPage() {
       return isLastPage ? false : lastPage.data.current_page + 1;
     },
     refetchOnWindowFocus: false,
-    // onSuccess: () => console.log('Response: ', response),
   });
 
-  const loadMoreRef = useRef();
+  useIntersectionObserver({
+    target: intersectionObserverTarget,
+    onIntersect: fetchNextPage,
+    enabled: hasNextPage,
+  });
 
   const handleCancelModal = () => {
     modalCtx.setModalProps({ ...modalCtx.modalProps, visible: false });
   };
-
-  useIntersectionObserver({
-    target: loadMoreRef,
-    onIntersect: fetchNextPage,
-    enabled: hasNextPage,
-  });
 
   const handleClick = () => {
     modalCtx.setModalProps({
@@ -136,30 +137,18 @@ export default function ClientsPage() {
           scroll={{ x: '100%', y: '400px' }}
           size="small"
           footer={() => (
-            <Button
-              onClick={() => fetchNextPage()}
-              disabled={!hasNextPage || isFetchingNextPage}
-            >
-              {isFetchingNextPage
-                ? 'Loading more...'
-                : hasNextPage
-                ? 'Load More'
-                : 'Nothing more to load'}
-            </Button>
+            <div style={{ textAlign: 'center' }}>
+              {isFetchingNextPage && <Spin size="small" />}
+            </div>
           )}
           onRow={(record, index) => {
             return {
               onClick: () => {
-                console.log('Ref bound to: ', loadMoreRef.current);
+                console.log('Ref bound to: ', intersectionObserverTarget);
               },
               ref:
-                index ===
-                response.pages.reduce(
-                  (sum, cur) => sum + cur.data.data.length,
-                  0
-                ) -
-                  1
-                  ? loadMoreRef
+                index === totalCurrentLength(response.pages) - 1
+                  ? (node) => setIntersectionObserverTarget(node)
                   : null,
             };
           }}

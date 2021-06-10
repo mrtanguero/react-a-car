@@ -4,7 +4,7 @@ export default function useIntersectionObserver({
   root,
   target,
   onIntersect,
-  threshold = 1.0,
+  threshold = 0.1,
   rootMargin = '0px',
   enabled = true,
 }) {
@@ -15,7 +15,9 @@ export default function useIntersectionObserver({
 
     const observer = new IntersectionObserver(
       (entries) =>
-        entries.forEach((entry) => entry.isIntersecting && onIntersect()),
+        entries.forEach((entry) => {
+          entry.isIntersecting && onIntersect();
+        }),
       {
         root: root && root.current,
         rootMargin,
@@ -23,18 +25,14 @@ export default function useIntersectionObserver({
       }
     );
 
-    const el = target && target.current;
-
-    if (!el) {
-      console.log('No element yet');
+    if (!target) {
       return;
     }
 
-    console.log('Prošlo!');
-    observer.observe(el);
+    observer.observe(target);
 
     return () => {
-      observer.unobserve(el);
+      observer.unobserve(target);
     };
-  }, [enabled, root, rootMargin, threshold, target, onIntersect]);
+  }, [target, enabled, root, rootMargin, threshold, onIntersect]);
 }

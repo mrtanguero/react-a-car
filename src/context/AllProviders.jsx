@@ -10,9 +10,9 @@ export default function AllProviders({ children }) {
   return (
     <ModalPropsProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <BrowserRouter>{children}</BrowserRouter>
-        </AuthProvider>
+        <BrowserRouter>
+          <AuthProvider>{children}</AuthProvider>
+        </BrowserRouter>
       </QueryClientProvider>
     </ModalPropsProvider>
   );
