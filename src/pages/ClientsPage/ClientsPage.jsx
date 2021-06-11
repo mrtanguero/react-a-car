@@ -21,7 +21,7 @@ import {
 import { deleteClient, getClients } from '../../services/clients';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import { currentTotalLength } from '../../helper/functions';
-import NewClientForm from '../../components/NewClientForm/NewClientForm';
+import ClientForm from '../../components/ClientForm/ClientForm';
 
 const { confirm } = Modal;
 
@@ -71,9 +71,44 @@ export default function ClientsPage() {
     modalCtx.setModalProps({
       visible: true,
       title: t('modals.newClient'),
-      children: <NewClientForm />,
+      children: <ClientForm onCancel={handleCancelModal} />,
       onOk: () => {},
       onCancel: handleCancelModal,
+      footer: null,
+    });
+  };
+
+  const handleShowClient = (id) => {
+    modalCtx.setModalProps({
+      visible: true,
+      title: `Showing data for client ${id}`,
+      children: (
+        <ClientForm
+          clientId={id}
+          disabled={true}
+          onCancel={handleCancelModal}
+        />
+      ),
+      onOk: () => {},
+      onCancel: handleCancelModal,
+      footer: null,
+    });
+  };
+
+  const handleEditClientClick = (id) => {
+    modalCtx.setModalProps({
+      visible: true,
+      title: `Edit client ${id}`,
+      children: (
+        <ClientForm
+          clientId={id}
+          disabled={false}
+          onCancel={handleCancelModal}
+        />
+      ),
+      onOk: () => {},
+      onCancel: handleCancelModal,
+      footer: null,
     });
   };
 
@@ -137,15 +172,25 @@ export default function ClientsPage() {
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log(text);
-                      console.log(record);
+                      if (!record?.user?.id) {
+                        message.error(
+                          'Ovaj klijent je seedovan i nema odgovarajućeg usera'
+                        );
+                        return;
+                      }
+                      handleEditClientClick(record.user.id);
                     }}
                     icon={<EditOutlined />}
                   />
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log(e);
+                      if (!record?.user?.id) {
+                        message.error(
+                          'Ovaj klijent je seedovan i nema odgovarajućeg usera'
+                        );
+                        return;
+                      }
                       confirm({
                         title: 'Do you want to delete this client?',
                         icon: <ExclamationCircleOutlined />,
@@ -180,7 +225,13 @@ export default function ClientsPage() {
           onRow={(record, index) => {
             return {
               onClick: () => {
-                console.log('Clicked on a record with id: ' + record.id);
+                if (!record?.user?.id) {
+                  message.error(
+                    'Ovaj klijent je seedovan i nema odgovarajućeg usera'
+                  );
+                  return;
+                }
+                handleShowClient(record.user.id);
               },
               ref:
                 index === currentTotalLength(response.pages) - 3

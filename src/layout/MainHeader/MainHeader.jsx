@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import NewCarContainer from '../../components/NewCarContainer/NewCarContainer';
 import modalContext from '../../context/modalContext';
-import NewClientForm from '../../components/NewClientForm/NewClientForm';
+import ClientForm from '../../components/ClientForm/ClientForm';
 import MNEFlag from '../../components/MNEFlag/MNEFlag';
 import GBFlag from '../../components/GBFlag/GBFlag';
 import { MenuOutlined } from '@ant-design/icons';
@@ -80,7 +80,7 @@ export default function MainHeader({
     modalCtx.setModalProps({
       visible: true,
       title: t('modals.newClient'),
-      children: <NewClientForm />,
+      children: <ClientForm />,
       onOk: () => {},
       onCancel: handleCancelModal,
     });
@@ -139,7 +139,11 @@ export default function MainHeader({
         </SubMenu>
         {user && (
           <>
-            <SubMenu key="user" className="main-header-user" title={user?.name?.split(' ')[0]}>
+            <SubMenu
+              key="user"
+              className="main-header-user"
+              title={user?.name?.split(' ')[0]}
+            >
               <Menu.Item key="user:password-change">
                 Promijeni lozinku
               </Menu.Item>

@@ -8,8 +8,32 @@ export const getClients = ({ pageParam = 1 }) => {
   });
 };
 
+export const createClient = (data) => {
+  return ourApi.post('/user-store', data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+  });
+};
+
+export const updateClient = (data, id) => {
+  return ourApi.post(`/user-update/${id}`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+  });
+};
+
 export const deleteClient = (id) => {
   return ourApi.delete(`/user-delete/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+  });
+};
+
+export const getClient = (id) => {
+  return ourApi.get(`/user-show/${id}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('jwt')}`,
     },

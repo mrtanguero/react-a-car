@@ -15,7 +15,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import modalContext from '../../context/modalContext';
 import NewCarContainer from '../../components/NewCarContainer/NewCarContainer';
-import NewClientForm from '../../components/NewClientForm/NewClientForm';
+import ClientForm from '../../components/ClientForm/ClientForm';
 import { logout } from '../../services/account';
 
 const { SubMenu } = Menu;
@@ -60,7 +60,7 @@ export default function MainDrawer({
     modalCtx.setModalProps({
       visible: true,
       title: t('modals.newClient'),
-      children: <NewClientForm />,
+      children: <ClientForm />,
       onOk: () => {},
       onCancel: handleCancelModal,
     });
