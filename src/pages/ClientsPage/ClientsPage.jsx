@@ -1,70 +1,29 @@
-import { Button, Card, PageHeader, Space, Spin, Table } from 'antd';
 import React, { useContext, useState } from 'react';
-import { useInfiniteQuery } from 'react-query';
+import {
+  Button,
+  Card,
+  PageHeader,
+  Space,
+  Spin,
+  Table,
+  Modal,
+  message,
+} from 'antd';
+import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import modalContext from '../../context/modalContext';
 import {
   DeleteOutlined,
   EditOutlined,
+  ExclamationCircleOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
-import NewClientForm from '../../components/NewClientForm/NewClientForm';
-import { getClients } from '../../services/clients';
+import { deleteClient, getClients } from '../../services/clients';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
-import { totalCurrentLength } from '../../helper/functions';
+import { currentTotalLength } from '../../helper/functions';
+import NewClientForm from '../../components/NewClientForm/NewClientForm';
 
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-    width: 180,
-  },
-  {
-    title: 'Country',
-    dataIndex: ['country', 'name'],
-    key: 'country',
-    width: 150,
-  },
-  {
-    title: 'ID document number',
-    dataIndex: 'identification_document_no',
-    key: 'document-id',
-    width: 150,
-    ellipsis: true,
-  },
-  {
-    title: 'Email',
-    dataIndex: 'email',
-    key: 'email',
-    width: 200,
-  },
-  {
-    title: 'Phone',
-    dataIndex: 'phone_no',
-    key: 'phone',
-    width: 150,
-  },
-  {
-    title: 'Actions',
-    key: 'action',
-    align: 'center',
-    width: 100,
-    fixed: 'right',
-    render: (_, record) => (
-      <Space size="small">
-        <Button
-          icon={<EditOutlined />}
-          onClick={(e) => {
-            e.stopPropagation();
-            console.log(record.id);
-          }}
-        />
-        <Button icon={<DeleteOutlined />} danger />
-      </Space>
-    ),
-  },
-];
+const { confirm } = Modal;
 
 export default function ClientsPage() {
   const modalCtx = useContext(modalContext);
@@ -72,6 +31,16 @@ export default function ClientsPage() {
     null
   );
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const mutation = useMutation((id) => deleteClient(id), {
+    onSuccess: () => {
+      queryClient.invalidateQueries('clients');
+      message.success('Deleted!');
+    },
+    onError: () => {
+      message.error('Nije izbrisano, vjerovatno jedan od ovih koji nemaju id');
+    },
+  });
 
   const {
     data: response,
@@ -81,7 +50,7 @@ export default function ClientsPage() {
     isFetching,
     isFetchingNextPage,
   } = useInfiniteQuery('clients', getClients, {
-    getNextPageParam: (lastPage, pages) => {
+    getNextPageParam: (lastPage) => {
       const isLastPage = lastPage.data.current_page === lastPage.data.last_page;
       return isLastPage ? false : lastPage.data.current_page + 1;
     },
@@ -98,7 +67,7 @@ export default function ClientsPage() {
     modalCtx.setModalProps({ ...modalCtx.modalProps, visible: false });
   };
 
-  const handleClick = () => {
+  const handleNewClientClick = () => {
     modalCtx.setModalProps({
       visible: true,
       title: t('modals.newClient'),
@@ -116,7 +85,7 @@ export default function ClientsPage() {
         ghost={true}
         title={t('navigation.clients')}
         extra={
-          <Button onClick={handleClick}>
+          <Button onClick={handleNewClientClick}>
             <UserAddOutlined />
             {t('buttons.newClient')}
           </Button>
@@ -125,7 +94,79 @@ export default function ClientsPage() {
       <Card>
         <Table
           loading={!response?.pages.length && isFetching}
-          columns={columns}
+          columns={[
+            {
+              title: 'Name',
+              dataIndex: 'name',
+              key: 'name',
+              width: 180,
+            },
+            {
+              title: 'Country',
+              dataIndex: ['country', 'name'],
+              key: 'country',
+              width: 150,
+            },
+            {
+              title: 'ID document number',
+              dataIndex: 'identification_document_no',
+              key: 'document-id',
+              width: 150,
+              ellipsis: true,
+            },
+            {
+              title: 'Email',
+              dataIndex: 'email',
+              key: 'email',
+              width: 200,
+            },
+            {
+              title: 'Phone',
+              dataIndex: 'phone_no',
+              key: 'phone',
+              width: 150,
+            },
+            {
+              title: 'Actions',
+              key: 'action',
+              align: 'center',
+              width: 100,
+              fixed: 'right',
+              render: (text, record) => (
+                <Space size="small">
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log(text);
+                      console.log(record);
+                    }}
+                    icon={<EditOutlined />}
+                  />
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log(e);
+                      confirm({
+                        title: 'Do you want to delete this client?',
+                        icon: <ExclamationCircleOutlined />,
+                        content: `This action will also delete all reservations tied to ${record.name}!`,
+                        okType: 'danger',
+                        onOk() {
+                          return mutation.mutateAsync(
+                            record.user && record.user.id
+                          );
+                        },
+                        onCancel() {},
+                      });
+                      console.log(record.id);
+                    }}
+                    icon={<DeleteOutlined />}
+                    danger
+                  />
+                </Space>
+              ),
+            },
+          ]}
           dataSource={
             [].concat.apply(
               [],
@@ -136,23 +177,28 @@ export default function ClientsPage() {
           pagination={false}
           scroll={{ x: '100%', y: '400px' }}
           size="small"
-          footer={() => (
-            <div style={{ textAlign: 'center' }}>
-              {isFetchingNextPage && <Spin size="small" />}
-            </div>
-          )}
           onRow={(record, index) => {
             return {
               onClick: () => {
-                console.log('Ref bound to: ', intersectionObserverTarget);
+                console.log('Clicked on a record with id: ' + record.id);
               },
               ref:
-                index === totalCurrentLength(response.pages) - 1
+                index === currentTotalLength(response.pages) - 3
                   ? (node) => setIntersectionObserverTarget(node)
                   : null,
             };
           }}
         />
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            width: '100%',
+            textAlign: 'center',
+          }}
+        >
+          {isFetchingNextPage && <Spin size="small" />}
+        </div>
       </Card>
     </>
   );
