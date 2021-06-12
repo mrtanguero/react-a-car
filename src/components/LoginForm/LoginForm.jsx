@@ -1,5 +1,5 @@
 import { Button, Card, Form, Input, message, PageHeader } from 'antd';
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { Redirect, useHistory } from 'react-router';
 import { useMutation } from 'react-query';
@@ -9,7 +9,6 @@ import { login } from '../../services/account';
 export default function LoginForm() {
   const auth = useContext(authContext);
   const history = useHistory();
-  const [buttonIsLoadding, setButtonIsLoading] = useState(false);
 
   const {
     register,
@@ -21,19 +20,16 @@ export default function LoginForm() {
     onSuccess: (response) => {
       localStorage.setItem('jwt', response.data.access_token);
       auth.setJwt(response.data.access_token);
-      setButtonIsLoading(false);
       history.replace('/');
     },
     onError: (error) => {
       if (error.response.data.error === 'Unauthorized') {
-        setButtonIsLoading(false);
         message.error('Jeste li sigurni da su vam to email i password?');
       }
     },
   });
 
   const onSubmit = (data) => {
-    setButtonIsLoading(true);
     mutation.mutate(data);
   };
 
@@ -80,7 +76,7 @@ export default function LoginForm() {
                 />
               </Form.Item>
               <Button
-                loading={buttonIsLoadding}
+                loading={mutation.isLoading}
                 type="primary"
                 htmlType="submit"
               >

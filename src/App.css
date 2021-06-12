@@ -1,4 +1,4 @@
-@import "~antd/dist/antd.css";
+@import '~antd/dist/antd.css';
 
 .App {
   text-align: center;
@@ -22,4 +22,7 @@
 
 .ant-layout-has-sider {
   flex-grow: 1;
+}
+.ant-table-row.ant-table-row-level-0 {
+  cursor: pointer;
 }

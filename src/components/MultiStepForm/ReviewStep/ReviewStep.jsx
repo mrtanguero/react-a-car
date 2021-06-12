@@ -2,13 +2,32 @@ import { Button, Image, message } from 'antd';
 import './ReviewStep.css';
 import React, { useContext } from 'react';
 import formDataContext from '../../../context/formDataContext';
+import { useMutation } from 'react-query';
+import { createVehicle } from '../../../services/cars';
 
 export default function ReviewStep({ setStep }) {
-  const { data } = useContext(formDataContext);
+  const { data, setValues } = useContext(formDataContext);
+  const mutation = useMutation('createVehicle', createVehicle, {
+    onSuccess: () => {
+      message.success('Created!');
+      setValues({});
+    },
+    onError: (err) => console.log(err.response),
+  });
 
   const handleSubmit = () => {
-    console.log('Data submitted: ', data);
-    message.success('Submitted!');
+    const formData = new FormData();
+    data?.photos?.fileList?.forEach((f) => {
+      console.log(f);
+      formData.append('photo[]', f.originFileObj, f.name);
+    });
+    Object.entries(data).forEach((entry) => {
+      if (entry !== 'files') {
+        formData.append(entry[0], entry[1]);
+      }
+    });
+    console.log(formData);
+    mutation.mutate(formData);
   };
 
   return (
@@ -31,7 +50,11 @@ export default function ReviewStep({ setStep }) {
         <Button style={{ margin: '0 8px' }} onClick={() => setStep(1)}>
           Korak nazad
         </Button>
-        <Button type="primary" onClick={handleSubmit}>
+        <Button
+          type="primary"
+          loading={mutation.isLoading}
+          onClick={handleSubmit}
+        >
           Sačuvaj
         </Button>
       </div>

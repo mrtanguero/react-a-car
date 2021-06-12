@@ -203,7 +203,6 @@ export default function ClientsPage() {
                         },
                         onCancel() {},
                       });
-                      console.log(record.id);
                     }}
                     icon={<DeleteOutlined />}
                     danger

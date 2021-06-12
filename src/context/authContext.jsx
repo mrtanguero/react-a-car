@@ -23,7 +23,7 @@ export const AuthProvider = (props) => {
     enabled: !!jwt,
   });
 
-  if (error) {
+  if (error && jwt) {
     localStorage.removeItem('jwt');
     setJwt('');
     setUser(null);

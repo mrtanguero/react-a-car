@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getCountries } from '../../services/cars';
+import { getCountries } from '../../services/countries';
 import { createClient, getClient, updateClient } from '../../services/clients';
 
 export default function ClientForm({ clientId, disabled, onCancel }) {
@@ -75,7 +75,6 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
   );
 
   const onSubmit = (data) => {
-    console.log(data);
     if (!clientId) {
       createMutation.mutate(data);
     } else {
@@ -165,6 +164,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
           )}
         />
       </Form.Item>
+
       <Form.Item
         label="Broj pasoša / lične karte"
         help={
@@ -192,6 +192,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
           )}
         />
       </Form.Item>
+
       <Form.Item
         label="Država"
         help={errors['country_id'] && errors['country_id'].message}
@@ -212,7 +213,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
               {...field}
               showSearch
               disabled={disabled}
-              placeholder="Select a person"
+              placeholder="Odaberite državu"
               optionFilterProp="label"
               options={
                 countriesResponse?.data.map((country) => {

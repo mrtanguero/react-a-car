@@ -1,10 +1,16 @@
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, Select } from 'antd';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useContext } from 'react';
 import formDataContext from '../../../context/formDataContext';
+import { getCarTypes } from '../../../services/carTypes';
+import { useQuery } from 'react-query';
+
+const { TextArea } = Input;
 
 export default function FirstStep({ setStep }) {
   const { data, setValues } = useContext(formDataContext);
+
+  const { data: carTypesResponse } = useQuery('getCarTypes', getCarTypes);
 
   const {
     handleSubmit,
@@ -28,14 +34,14 @@ export default function FirstStep({ setStep }) {
     <Form onSubmitCapture={handleSubmit(onSubmit)} layout="vertical">
       <Form.Item
         label="Broj tablica"
-        help={errors['platesNumber'] && errors['platesNumber'].message}
-        validateStatus={errors['platesNumber'] && 'error'}
+        help={errors['plate_no'] && errors['plate_no'].message}
+        validateStatus={errors['plate_no'] && 'error'}
         hasFeedback
       >
         <Controller
-          name="platesNumber"
+          name="plate_no"
           control={control}
-          defaultValue={data?.platesNumber}
+          defaultValue={data?.plate_no}
           rules={{
             required: {
               value: true,
@@ -50,16 +56,17 @@ export default function FirstStep({ setStep }) {
           )}
         />
       </Form.Item>
+
       <Form.Item
         label="Godina proizvodnje"
-        help={errors['productionYear'] && errors['productionYear'].message}
-        validateStatus={errors['productionYear'] && 'error'}
+        help={errors['production_year'] && errors['production_year'].message}
+        validateStatus={errors['production_year'] && 'error'}
         hasFeedback
       >
         <Controller
-          name="productionYear"
+          name="production_year"
           control={control}
-          defaultValue={data?.productionYear}
+          defaultValue={data?.production_year}
           rules={{
             required: {
               value: true,
@@ -83,6 +90,120 @@ export default function FirstStep({ setStep }) {
           )}
         />
       </Form.Item>
+
+      <Form.Item
+        label="Tip vozila"
+        help={errors['car_type_id'] && errors['car_type_id'].message}
+        validateStatus={errors['car_type_id'] && 'error'}
+        hasFeedback
+      >
+        <Controller
+          name="car_type_id"
+          control={control}
+          rules={{
+            required: {
+              value: true,
+              message: 'Obavezno je odabrati tip vozila',
+            },
+          }}
+          render={({ field }) => (
+            <Select
+              {...field}
+              defaultValue={data?.car_type_id}
+              placeholder="Odaberite tip vozila"
+              options={
+                carTypesResponse?.data.map((carType) => {
+                  return { label: carType.name, value: carType.id };
+                }) || []
+              }
+            ></Select>
+          )}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Broj sjedišta"
+        help={errors['no_of_seats'] && errors['no_of_seats'].message}
+        validateStatus={errors['no_of_seats'] && 'error'}
+        hasFeedback
+      >
+        <Controller
+          name="no_of_seats"
+          control={control}
+          defaultValue={data?.no_of_seats}
+          rules={{
+            required: {
+              value: true,
+              message: 'Broj sjedišta je obavezan',
+            },
+            min: {
+              value: 1,
+              message: 'Vozilo ne može imati manje od jednog sjedišta',
+            },
+            max: {
+              value: 55,
+              message: 'Vozilo ne može imati više od 55 sjedišta',
+            },
+          }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="number"
+              placeholder="Unesite broj sjedišta"
+            />
+          )}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Cijena po danu"
+        help={errors['price_per_day'] && errors['price_per_day'].message}
+        validateStatus={errors['price_per_day'] && 'error'}
+        hasFeedback
+      >
+        <Controller
+          name="price_per_day"
+          control={control}
+          defaultValue={data?.price_per_day}
+          rules={{
+            required: {
+              value: true,
+              message: 'Cijena je obavezno polje',
+            },
+          }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="number"
+              placeholder="Unesite cijenu po danu"
+            />
+          )}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Dodatne napomene"
+        help={errors['remarks'] && errors['remarks'].message}
+        validateStatus={errors['remarks'] && 'error'}
+        hasFeedback
+      >
+        <Controller
+          name="remarks"
+          control={control}
+          defaultValue={data?.remarks}
+          rules={{
+            maxLength: 255,
+          }}
+          render={({ field }) => (
+            <TextArea
+              {...field}
+              rows={4}
+              placeholder="Unesite godinu proizvodnje"
+            />
+          )}
+        />
+      </Form.Item>
+
       <div className="form-actions">
         <Button type="primary" htmlType="submit">
           Sledeći korak

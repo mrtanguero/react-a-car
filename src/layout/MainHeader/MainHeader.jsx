@@ -80,9 +80,10 @@ export default function MainHeader({
     modalCtx.setModalProps({
       visible: true,
       title: t('modals.newClient'),
-      children: <ClientForm />,
+      children: <ClientForm onCancel={handleCancelModal} />,
       onOk: () => {},
       onCancel: handleCancelModal,
+      footer: null,
     });
   };
 
