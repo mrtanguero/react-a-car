@@ -9,7 +9,6 @@ export const getVehicles = ({ pageParam = 1 }) => {
 };
 
 export const createVehicle = (data) => {
-  console.log(data);
   return ourApi.post('/vehicle', data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('jwt')}`,
@@ -35,6 +34,14 @@ export const deleteVehicle = (id) => {
 
 export const getVehicle = (id) => {
   return ourApi.get(`/vehicle-show/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+  });
+};
+
+export const deletePhoto = (id) => {
+  return ourApi.delete(`/photo-delete/${id}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('jwt')}`,
     },

@@ -3,13 +3,13 @@ import { Layout, Menu } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import NewCarContainer from '../../components/NewCarContainer/NewCarContainer';
 import modalContext from '../../context/modalContext';
 import ClientForm from '../../components/ClientForm/ClientForm';
 import MNEFlag from '../../components/MNEFlag/MNEFlag';
 import GBFlag from '../../components/GBFlag/GBFlag';
 import { MenuOutlined } from '@ant-design/icons';
 import { logout } from '../../services/account';
+import MultiStepForm from '../../components/MultiStepForm/MultiStepForm';
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
@@ -68,7 +68,7 @@ export default function MainHeader({
   const handleClickAddCar = () => {
     modalCtx.setModalProps({
       title: t('modals.newCar'),
-      children: <NewCarContainer />,
+      children: <MultiStepForm closeModal={handleCancelModal} />,
       visible: true,
       onOk: () => {},
       onCancel: handleCancelModal,

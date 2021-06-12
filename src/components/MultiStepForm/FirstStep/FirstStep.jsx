@@ -1,6 +1,6 @@
 import { Button, Form, Input, Select } from 'antd';
 import { Controller, useForm } from 'react-hook-form';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import formDataContext from '../../../context/formDataContext';
 import { getCarTypes } from '../../../services/carTypes';
 import { useQuery } from 'react-query';
@@ -15,15 +15,23 @@ export default function FirstStep({ setStep }) {
   const {
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm({
     mode: 'onTouched',
+    defaultValues: {
+      plate_no: data?.plate_no,
+      production_year: data?.production_year,
+      car_type_id: data?.car_type_id,
+      no_of_seats: data?.no_of_seats,
+      price_per_day: data?.price_per_day,
+      remarks: data?.remarks,
+    },
   });
 
-  // Trebaće možda za async
-  // useEffect(() => {
-  //   reset(data);
-  // }, [data, reset]);
+  useEffect(() => {
+    reset(data);
+  }, [data, reset]);
 
   const onSubmit = (data) => {
     setValues(data);
@@ -41,7 +49,6 @@ export default function FirstStep({ setStep }) {
         <Controller
           name="plate_no"
           control={control}
-          defaultValue={data?.plate_no}
           rules={{
             required: {
               value: true,
@@ -109,7 +116,6 @@ export default function FirstStep({ setStep }) {
           render={({ field }) => (
             <Select
               {...field}
-              defaultValue={data?.car_type_id}
               placeholder="Odaberite tip vozila"
               options={
                 carTypesResponse?.data.map((carType) => {
@@ -130,7 +136,6 @@ export default function FirstStep({ setStep }) {
         <Controller
           name="no_of_seats"
           control={control}
-          defaultValue={data?.no_of_seats}
           rules={{
             required: {
               value: true,
@@ -164,7 +169,6 @@ export default function FirstStep({ setStep }) {
         <Controller
           name="price_per_day"
           control={control}
-          defaultValue={data?.price_per_day}
           rules={{
             required: {
               value: true,
@@ -190,7 +194,6 @@ export default function FirstStep({ setStep }) {
         <Controller
           name="remarks"
           control={control}
-          defaultValue={data?.remarks}
           rules={{
             maxLength: 255,
           }}

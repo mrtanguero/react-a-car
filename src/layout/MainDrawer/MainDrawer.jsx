@@ -14,9 +14,9 @@ import { Drawer, Menu } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import modalContext from '../../context/modalContext';
-import NewCarContainer from '../../components/NewCarContainer/NewCarContainer';
 import ClientForm from '../../components/ClientForm/ClientForm';
 import { logout } from '../../services/account';
+import MultiStepForm from '../../components/MultiStepForm/MultiStepForm';
 
 const { SubMenu } = Menu;
 
@@ -48,7 +48,7 @@ export default function MainDrawer({
   const handleClickAddCar = () => {
     modalCtx.setModalProps({
       title: t('modals.newCar'),
-      children: <NewCarContainer />,
+      children: <MultiStepForm closeModal={handleCancelModal} />,
       visible: true,
       onOk: () => {},
       onCancel: handleCancelModal,
@@ -60,9 +60,10 @@ export default function MainDrawer({
     modalCtx.setModalProps({
       visible: true,
       title: t('modals.newClient'),
-      children: <ClientForm />,
+      children: <ClientForm onCancel={handleCancelModal} />,
       onOk: () => {},
       onCancel: handleCancelModal,
+      footer: null,
     });
   };
 

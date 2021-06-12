@@ -12,7 +12,7 @@ const dummyRequest = ({ file, onSuccess }) => {
   }, 0);
 };
 
-export default function SecondStep({ setStep }) {
+export default function SecondStep({ setStep, vehicleId }) {
   const { data, setValues } = useContext(formDataContext);
   const {
     control,
@@ -24,11 +24,13 @@ export default function SecondStep({ setStep }) {
     defaultValues: { photos: data.photos },
   });
 
-  // KAKO OVOOOOO?!
-  // const onChange = (info) => {
-  //   console.log('First argument (info): ', info);
-  //   return { file: info.file, fileList: info.fileList };
-  // };
+  const onRemove = (photo) => {
+    if (!photo.originFileObj) {
+      setValues({
+        photoDeleteList: data?.photoDeleteList.concat(photo.uid),
+      });
+    }
+  };
 
   const onSubmit = (secondStepData) => {
     if (secondStepData.photos.fileList.length === 0) {
@@ -39,7 +41,6 @@ export default function SecondStep({ setStep }) {
       });
       return;
     }
-    console.log('Second step data that is being added: ', secondStepData);
     setValues(secondStepData);
     setStep(2);
   };
@@ -67,8 +68,9 @@ export default function SecondStep({ setStep }) {
               maxCount={5}
               accept="image/*"
               listType="picture"
-              fileList={value?.fileList.length ? value.fileList : undefined}
+              fileList={value?.fileList?.length ? value.fileList : undefined}
               onPreview={() => {}}
+              onRemove={onRemove}
               customRequest={dummyRequest}
               children={
                 <>
