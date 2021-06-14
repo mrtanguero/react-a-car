@@ -31,15 +31,14 @@ export default function CarsPage() {
     null
   );
   const { t } = useTranslation();
-  const queryVehicle = useQueryClient();
+  const queryClient = useQueryClient();
   const mutation = useMutation((id) => deleteVehicle(id), {
     onSuccess: () => {
-      queryVehicle.invalidateQueries('vehicles');
+      queryClient.invalidateQueries('vehicles');
       message.success('Deleted!');
     },
-    onError: () => {
-      console.log(error.response);
-      message.error('Greška neka, vidi console log');
+    onError: (error) => {
+      message.error(error.response.data.message);
     },
   });
 

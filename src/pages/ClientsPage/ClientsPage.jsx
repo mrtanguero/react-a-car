@@ -38,9 +38,11 @@ export default function ClientsPage() {
       message.success('Deleted!');
     },
     onError: () => {
-      message.error('Nije izbrisano, vjerovatno jedan od ovih koji nemaju id');
+      message.error(error.response.data.message);
     },
   });
+
+  const searchTerm = '';
 
   const {
     data: response,
@@ -49,7 +51,7 @@ export default function ClientsPage() {
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-  } = useInfiniteQuery('clients', getClients, {
+  } = useInfiniteQuery(['clients', { searchTerm }], getClients, {
     getNextPageParam: (lastPage) => {
       const isLastPage = lastPage.data.current_page === lastPage.data.last_page;
       return isLastPage ? false : lastPage.data.current_page + 1;

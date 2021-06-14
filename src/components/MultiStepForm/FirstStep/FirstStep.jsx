@@ -118,7 +118,7 @@ export default function FirstStep({ setStep }) {
               {...field}
               placeholder="Odaberite tip vozila"
               options={
-                carTypesResponse?.data.map((carType) => {
+                carTypesResponse?.data.data.map((carType) => {
                   return { label: carType.name, value: carType.id };
                 }) || []
               }
