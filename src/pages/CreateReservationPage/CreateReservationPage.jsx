@@ -63,7 +63,6 @@ export default function CreateReservationPage() {
           lastPage?.data?.current_page === lastPage?.data?.last_page;
         return isLastPage ? false : lastPage?.data?.current_page + 1;
       },
-      onSuccess: (data) => console.log(data),
       onError: (error) => console.log(error.response.data.message),
       refetchOnWindowFocus: false,
     }
@@ -91,7 +90,6 @@ export default function CreateReservationPage() {
   };
 
   const handleCarTypeChange = (value) => {
-    console.log(value);
     setCarType(value);
   };
 

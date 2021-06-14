@@ -1,4 +1,12 @@
-import { Select, Form, Spin, Button, DatePicker, message } from 'antd';
+import {
+  Select,
+  Form,
+  Spin,
+  Button,
+  DatePicker,
+  message,
+  TreeSelect,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -11,7 +19,11 @@ import { currentTotalLength } from '../../helper/functions';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import { getClients } from '../../services/clients';
 import moment from 'moment';
-import { createReservation, getLocations } from '../../services/reservations';
+import {
+  createReservation,
+  getEquipment,
+  getLocations,
+} from '../../services/reservations';
 
 const { Option } = Select;
 
@@ -24,6 +36,9 @@ export default function CreateReservationForm({
   const [intersectionObserverTarget, setIntersectionObserverTarget] = useState(
     null
   );
+  const [availableEquipment, setAvailableEquipment] = useState([]);
+  const [equipmentData, setEquipmentData] = useState([]);
+  const [equipmentQueryIsEnabled, setEquipmentQueryIsEnabled] = useState(true);
   const [queryIsEnabled, setQueryIsEnabled] = useState(false);
   const {
     control,
@@ -38,7 +53,37 @@ export default function CreateReservationForm({
     },
   });
 
+  const renderEquipmentTreeOptions = (data) => {
+    return data.map((option) => {
+      const treeOptions = {};
+      treeOptions.title = option.name;
+      treeOptions.value = option.id;
+      treeOptions.selectable = false;
+      if (option.max_quantity > 1) {
+        const children = [];
+        for (let i = 0; i < option.max_quantity; i++) {
+          children.push({
+            title: `${option.name}${i + 1 > 1 ? 's' : ''}: ${i + 1}`,
+            value: `${option.id}-${i + 1}`,
+          });
+        }
+        treeOptions.children = children;
+      } else {
+        treeOptions.value = `${option.id}-1`;
+        treeOptions.selectable = true;
+      }
+      return treeOptions;
+    });
+  };
+
   const { data: locationsResponse } = useQuery('locations', getLocations);
+  useQuery('equipment', getEquipment, {
+    enabled: equipmentQueryIsEnabled,
+    onSuccess: ({ data: { data } }) => {
+      setAvailableEquipment(data);
+      setEquipmentQueryIsEnabled(false);
+    },
+  });
   const queryClient = useQueryClient();
 
   const mutation = useMutation('createReservation', createReservation, {
@@ -115,11 +160,26 @@ export default function CreateReservationForm({
     };
   }, [clientSearchTerm]);
 
+  const handleTreeSelectChange = (data) => {
+    const noDuplicates = data.filter(
+      (entry, i, arr) =>
+        entry.split('-')[0] !== arr[arr.length - 1].split('-')[0] ||
+        i === arr.length - 1
+    );
+    setEquipmentData(noDuplicates);
+  };
+
   const onSubmit = (data) => {
     mutation.mutate({
       ...data,
       from_date: data.from_date.format('YYYY-MM-DD'),
       to_date: data.to_date.format('YYYY-MM-DD'),
+      equipment: equipmentData.map((entry) => {
+        return {
+          equipment_id: entry.split('-')[0],
+          quantity: entry.split('-')[1],
+        };
+      }),
     });
   };
 
@@ -279,7 +339,17 @@ export default function CreateReservationForm({
           )}
         />
       </Form.Item>
-      <Button type="primary" htmlType="submit">
+      <Form.Item label="Dodatna oprema" hasFeedback>
+        <TreeSelect
+          name="equipment"
+          treeData={renderEquipmentTreeOptions(availableEquipment)}
+          onChange={handleTreeSelectChange}
+          value={equipmentData}
+          multiple
+        />
+      </Form.Item>
+
+      <Button type="primary" htmlType="submit" loading={mutation.isLoading}>
         Sačuvaj
       </Button>
     </Form>

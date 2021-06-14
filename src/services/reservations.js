@@ -41,5 +41,17 @@ export const getReservation = (id) => {
 };
 
 export const getLocations = () => {
-  return ourApi.get('/locations');
+  return ourApi.get('/locations', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+  });
+};
+
+export const getEquipment = () => {
+  return ourApi.get('/equipment', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+  });
 };

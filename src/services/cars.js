@@ -50,7 +50,6 @@ export const deletePhoto = (id) => {
 
 export const getAvailableVehicles = ({ pageParam = 1, queryKey }) => {
   const { dateFrom, dateTo, carType } = queryKey[1];
-  console.log(dateFrom, dateTo, carType);
   return ourApi.get('/cars-available', {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('jwt')}`,
