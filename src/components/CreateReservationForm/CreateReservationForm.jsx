@@ -15,7 +15,10 @@ import {
   useQuery,
   useQueryClient,
 } from 'react-query';
-import { currentTotalLength } from '../../helper/functions';
+import {
+  currentTotalLength,
+  renderEquipmentTreeOptions,
+} from '../../helper/functions';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import { getClients } from '../../services/clients';
 import moment from 'moment';
@@ -52,29 +55,6 @@ export default function CreateReservationForm({
       vehicle_id: vehicleData.id,
     },
   });
-
-  const renderEquipmentTreeOptions = (data) => {
-    return data.map((option) => {
-      const treeOptions = {};
-      treeOptions.title = option.name;
-      treeOptions.value = option.id;
-      treeOptions.selectable = false;
-      if (option.max_quantity > 1) {
-        const children = [];
-        for (let i = 0; i < option.max_quantity; i++) {
-          children.push({
-            title: `${option.name}${i + 1 > 1 ? 's' : ''}: ${i + 1}`,
-            value: `${option.id}-${i + 1}`,
-          });
-        }
-        treeOptions.children = children;
-      } else {
-        treeOptions.value = `${option.id}-1`;
-        treeOptions.selectable = true;
-      }
-      return treeOptions;
-    });
-  };
 
   const { data: locationsResponse } = useQuery('locations', getLocations);
   useQuery('equipment', getEquipment, {

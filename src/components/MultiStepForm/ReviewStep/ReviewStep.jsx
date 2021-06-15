@@ -1,6 +1,6 @@
 import { Button, Image, message } from 'antd';
 import './ReviewStep.css';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import formDataContext from '../../../context/formDataContext';
 import { useMutation, useQueryClient } from 'react-query';
 import {
@@ -37,7 +37,6 @@ export default function ReviewStep({
     (data) => updateVehicle(data, vehicleId),
     {
       onSuccess: (response) => {
-        console.log(response);
         queryClient.invalidateQueries('vehicles');
         data?.photoDeleteList.forEach((id) => deletePhotoMutation.mutate(id));
         queryClient.invalidateQueries('getVehicle');
@@ -49,13 +48,7 @@ export default function ReviewStep({
     }
   );
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   const handleSubmit = () => {
-    console.log(data);
-
     const formData = new FormData();
     data?.photos?.fileList?.forEach((f) => {
       if (f.originFileObj) {
