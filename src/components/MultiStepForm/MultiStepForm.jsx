@@ -36,7 +36,6 @@ export default function MultiStepForm({ vehicleId, disabled, closeModal }) {
               <Step key={item.title} title={item.title} />
             ))}
           </Steps>
-
           <div className="steps-content" style={{ paddingTop: 20 }}>
             {current === 0 && <FirstStep setStep={setCurrent} />}
             {current === 1 && (

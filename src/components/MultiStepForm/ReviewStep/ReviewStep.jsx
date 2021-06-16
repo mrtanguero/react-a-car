@@ -1,4 +1,4 @@
-import { Button, Image, message } from 'antd';
+import { Button, Descriptions, Divider, Image, message } from 'antd';
 import './ReviewStep.css';
 import React, { useContext } from 'react';
 import formDataContext from '../../../context/formDataContext';
@@ -69,6 +69,33 @@ export default function ReviewStep({
 
   return (
     <>
+      <div className="vehicle-info">
+        <Descriptions
+          // title="Vehicle"
+          size="small"
+          column={1}
+          bordered={true}
+          labelStyle={{ width: '50%', textAlign: 'right' }}
+          contentStyle={{ color: 'grey' }}
+        >
+          <Descriptions.Item label="Broj registracije">
+            {data?.plate_no}
+          </Descriptions.Item>
+          <Descriptions.Item label="Godina proizvodnje">
+            {data?.production_year}
+          </Descriptions.Item>
+          <Descriptions.Item label="Tip vozila">
+            {data?.car_type?.name}
+          </Descriptions.Item>
+          <Descriptions.Item label="Broj sjedišta">
+            {data?.no_of_seats}
+          </Descriptions.Item>
+          <Descriptions.Item label="Cijena po danu">
+            {data?.price_per_day}€
+          </Descriptions.Item>
+        </Descriptions>
+      </div>
+      <Divider />
       <div className="preview-group-container">
         <Image.PreviewGroup>
           {data?.photos?.fileList?.map((photo) => {
@@ -88,18 +115,21 @@ export default function ReviewStep({
         </Image.PreviewGroup>
       </div>
       {!disabled && (
-        <div className="form-actions">
-          <Button style={{ margin: '0 8px' }} onClick={() => setStep(1)}>
-            Korak nazad
-          </Button>
-          <Button
-            type="primary"
-            loading={createCarMutation.isLoading}
-            onClick={handleSubmit}
-          >
-            Sačuvaj
-          </Button>
-        </div>
+        <>
+          <Divider />
+          <div className="form-actions">
+            <Button style={{ margin: '0 8px' }} onClick={() => setStep(1)}>
+              Korak nazad
+            </Button>
+            <Button
+              type="primary"
+              loading={createCarMutation.isLoading}
+              onClick={handleSubmit}
+            >
+              Sačuvaj
+            </Button>
+          </div>
+        </>
       )}
     </>
   );
