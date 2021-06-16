@@ -225,6 +225,7 @@ export default function ReservationForm({
                 {reservationResponse?.data.equipment.map((equipment) => {
                   return (
                     <Descriptions.Item
+                      key={equipment.id}
                       label={`${equipment.name}${
                         equipment.pivot.quantity > 1 ? 's' : ''
                       }`}

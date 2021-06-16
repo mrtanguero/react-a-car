@@ -17,20 +17,16 @@ export default function MainLayout({ children }) {
   return (
     <Layout>
       <MainHeader
-        user={auth.user}
-        setUser={auth.setUser}
-        setJwt={auth.setJwt}
+        auth={auth}
         drawerIsVisible={drawerIsVisible}
         setDrawerIsVisible={setDrawerIsVisible}
       />
       <Layout>
-        {auth.jwt && <MainSidebar />}
+        {auth?.user?.roleId === 1 && <MainSidebar />}
         <Layout style={{ padding: '0 24px 24px' }}>
-          {auth.jwt && (
+          {auth?.jwt && (
             <MainDrawer
-              user={auth.user}
-              setUser={auth.setUser}
-              setJwt={auth.setJwt}
+              auth={auth}
               drawerIsVisible={drawerIsVisible}
               setDrawerIsVisible={setDrawerIsVisible}
             />

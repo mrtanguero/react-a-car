@@ -17,9 +17,7 @@ const { Header } = Layout;
 export default function MainHeader({
   drawerIsVisible,
   setDrawerIsVisible,
-  user,
-  setUser,
-  setJwt,
+  auth,
 }) {
   const [currentMain, setCurrentMain] = useState([null, 'locale:me']);
   const { pathname } = useLocation();
@@ -90,8 +88,8 @@ export default function MainHeader({
   const handleLogout = () => {
     logout().then(() => {
       localStorage.removeItem('jwt');
-      setJwt(null);
-      setUser(null);
+      auth.setJwt(null);
+      auth.setUser(null);
       history.push('/login');
     });
   };
@@ -107,28 +105,30 @@ export default function MainHeader({
         disabledOverflow={true}
         className="main-header-menu"
       >
-        {user && (
+        {auth?.jwt && (
           <>
             <Menu.Item key="home" className="main-header-home">
               <Link to="/">{t('navigation.home')}</Link>
             </Menu.Item>
-            <SubMenu
-              key="create"
-              title={t('navigation.addNew')}
-              className="main-header-create-submenu"
-            >
-              <Menu.Item key="create:client" onClick={handleClickAddClient}>
-                {t('navigation.addNewClient')}
-              </Menu.Item>
-              <Menu.Item key="create:car" onClick={handleClickAddCar}>
-                {t('navigation.addNewCar')}
-              </Menu.Item>
-              <Menu.Item key="create:reservation">
-                <Link to="/reservations/create">
-                  {t('navigation.addNewReservation')}
-                </Link>
-              </Menu.Item>
-            </SubMenu>
+            {auth?.user?.roleId === 1 && (
+              <SubMenu
+                key="create"
+                title={t('navigation.addNew')}
+                className="main-header-create-submenu"
+              >
+                <Menu.Item key="create:client" onClick={handleClickAddClient}>
+                  {t('navigation.addNewClient')}
+                </Menu.Item>
+                <Menu.Item key="create:car" onClick={handleClickAddCar}>
+                  {t('navigation.addNewCar')}
+                </Menu.Item>
+                <Menu.Item key="create:reservation">
+                  <Link to="/reservations/create">
+                    {t('navigation.addNewReservation')}
+                  </Link>
+                </Menu.Item>
+              </SubMenu>
+            )}
           </>
         )}
         <SubMenu
@@ -138,12 +138,12 @@ export default function MainHeader({
           <Menu.Item key="locale:me">[ME] Crnogorski</Menu.Item>
           <Menu.Item key="locale:en">[EN] English</Menu.Item>
         </SubMenu>
-        {user && (
+        {auth?.jwt && (
           <>
             <SubMenu
               key="user"
               className="main-header-user"
-              title={user?.name?.split(' ')[0]}
+              title={auth?.user?.name?.split(' ')[0]}
             >
               <Menu.Item key="user:password-change">
                 Promijeni lozinku

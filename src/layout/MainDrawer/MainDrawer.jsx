@@ -23,9 +23,7 @@ const { SubMenu } = Menu;
 export default function MainDrawer({
   drawerIsVisible,
   setDrawerIsVisible,
-  user,
-  setUser,
-  setJwt,
+  auth,
 }) {
   const [currentDrawer, setCurrentDrawer] = useState(['home']);
   const modalCtx = useContext(modalContext);
@@ -70,8 +68,8 @@ export default function MainDrawer({
   const handleLogout = () => {
     logout().then(() => {
       localStorage.removeItem('jwt');
-      setJwt(null);
-      setUser(null);
+      auth.setJwt(null);
+      auth.setUser(null);
       history.push('/login');
     });
   };
@@ -94,44 +92,48 @@ export default function MainDrawer({
         <Menu.Item key="home" icon={<HomeOutlined />}>
           <Link to="/">{t('navigation.home')}</Link>
         </Menu.Item>
-        <Menu.Item key="clients" icon={<UserOutlined />}>
-          <Link to="/clients">{t('navigation.clients')}</Link>
-        </Menu.Item>
-        <Menu.Item key="cars" icon={<CarOutlined />}>
-          <Link to="/cars">{t('navigation.vehicles')}</Link>
-        </Menu.Item>
-        <Menu.Item key="reservations" icon={<CalendarOutlined />}>
-          <Link to="/reservations">{t('navigation.reservations')}</Link>
-        </Menu.Item>
-        <SubMenu
-          key="create"
-          icon={<PlusOutlined />}
-          title={t('navigation.addNew')}
-        >
-          <Menu.Item
-            key="create:client"
-            icon={<UserAddOutlined />}
-            onClick={handleClickAddClient}
-          >
-            {t('navigation.addNewClient')}
-          </Menu.Item>
-          <Menu.Item
-            key="create:car"
-            icon={<CarOutlined />}
-            onClick={handleClickAddCar}
-          >
-            {t('navigation.addNewCar')}
-          </Menu.Item>
-          <Menu.Item key="create:reservation" icon={<CalendarOutlined />}>
-            <Link to="/reservations/create">
-              {t('navigation.addNewReservation')}
-            </Link>
-          </Menu.Item>
-        </SubMenu>
+        {auth?.user?.roleId === 1 && (
+          <>
+            <Menu.Item key="clients" icon={<UserOutlined />}>
+              <Link to="/clients">{t('navigation.clients')}</Link>
+            </Menu.Item>
+            <Menu.Item key="cars" icon={<CarOutlined />}>
+              <Link to="/cars">{t('navigation.vehicles')}</Link>
+            </Menu.Item>
+            <Menu.Item key="reservations" icon={<CalendarOutlined />}>
+              <Link to="/reservations">{t('navigation.reservations')}</Link>
+            </Menu.Item>
+            <SubMenu
+              key="create"
+              icon={<PlusOutlined />}
+              title={t('navigation.addNew')}
+            >
+              <Menu.Item
+                key="create:client"
+                icon={<UserAddOutlined />}
+                onClick={handleClickAddClient}
+              >
+                {t('navigation.addNewClient')}
+              </Menu.Item>
+              <Menu.Item
+                key="create:car"
+                icon={<CarOutlined />}
+                onClick={handleClickAddCar}
+              >
+                {t('navigation.addNewCar')}
+              </Menu.Item>
+              <Menu.Item key="create:reservation" icon={<CalendarOutlined />}>
+                <Link to="/reservations/create">
+                  {t('navigation.addNewReservation')}
+                </Link>
+              </Menu.Item>
+            </SubMenu>
+          </>
+        )}
         <SubMenu
           key="user"
           icon={<ProfileOutlined />}
-          title={user?.name?.split(' ')[0]}
+          title={auth?.user?.name?.split(' ')[0]}
         >
           <Menu.Item icon={<LockOutlined />} key="user:password-change">
             Promijeni lozinku
