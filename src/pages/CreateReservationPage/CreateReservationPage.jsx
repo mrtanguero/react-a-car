@@ -85,7 +85,6 @@ export default function CreateReservationPage() {
   };
 
   const handleDatesChange = (date, dateString) => {
-    console.log('Dates: ', date, dateString);
     setReservationDates([dateString[0], dateString[1]]);
   };
 

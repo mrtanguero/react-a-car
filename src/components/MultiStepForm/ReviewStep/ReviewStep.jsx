@@ -44,7 +44,7 @@ export default function ReviewStep({
         closeModal();
         message.success('Updated!');
       },
-      onError: (err) => message.error(err.response.data.message),
+      onError: (error) => message.error(error.response.data.message),
     }
   );
 
@@ -71,10 +71,9 @@ export default function ReviewStep({
     <>
       <div className="vehicle-info">
         <Descriptions
-          // title="Vehicle"
           size="small"
           column={1}
-          bordered={true}
+          bordered
           labelStyle={{ width: '50%', textAlign: 'right' }}
           contentStyle={{ color: 'grey' }}
         >

@@ -26,3 +26,9 @@
 .ant-table-row.ant-table-row-level-0 {
   cursor: pointer;
 }
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 32px;
+}

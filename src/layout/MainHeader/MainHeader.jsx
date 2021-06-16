@@ -10,6 +10,7 @@ import GBFlag from '../../components/GBFlag/GBFlag';
 import { MenuOutlined } from '@ant-design/icons';
 import { logout } from '../../services/account';
 import MultiStepForm from '../../components/MultiStepForm/MultiStepForm';
+import PasswordChangeForm from '../../components/PasswordChangeForm/PasswordChangeForm';
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
@@ -47,7 +48,8 @@ export default function MainHeader({
       e.key === 'create:car' ||
       e.key === 'create:client' ||
       e.key === 'menu-icon' ||
-      e.key === 'logout'
+      e.key === 'logout' ||
+      e.key === 'user:password-change'
     ) {
       return;
     }
@@ -79,6 +81,17 @@ export default function MainHeader({
       visible: true,
       title: t('modals.newClient'),
       children: <ClientForm onCancel={handleCancelModal} />,
+      onOk: () => {},
+      onCancel: handleCancelModal,
+      footer: null,
+    });
+  };
+
+  const handlePasswordChangeClick = () => {
+    modalCtx.setModalProps({
+      visible: true,
+      title: 'Promijenite lozinku',
+      children: <PasswordChangeForm closeModal={handleCancelModal} />,
       onOk: () => {},
       onCancel: handleCancelModal,
       footer: null,
@@ -145,7 +158,10 @@ export default function MainHeader({
               className="main-header-user"
               title={auth?.user?.name?.split(' ')[0]}
             >
-              <Menu.Item key="user:password-change">
+              <Menu.Item
+                key="user:password-change"
+                onClick={handlePasswordChangeClick}
+              >
                 Promijeni lozinku
               </Menu.Item>
               <Menu.Item

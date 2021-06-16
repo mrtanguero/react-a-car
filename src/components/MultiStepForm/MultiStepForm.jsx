@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import './MultiStepForm.css';
 import { Steps } from 'antd';
 import FirstStep from './FirstStep/FirstStep';
 import SecondStep from './SecondStep/SecondStep';

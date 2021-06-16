@@ -23,6 +23,9 @@ import {
 import moment from 'moment';
 
 import { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import MyAsyncSelect from '../../components/MyAsyncSelect/MyAsyncSelect';
+import { getClients } from '../../services/clients';
 
 export default function ReservationForm({
   reservationId,
@@ -31,6 +34,7 @@ export default function ReservationForm({
 }) {
   const [availableEquipment, setAvailableEquipment] = useState([]);
   const [equipmentData, setEquipmentData] = useState([]);
+  const history = useHistory();
 
   const queryClient = useQueryClient();
 
@@ -46,6 +50,15 @@ export default function ReservationForm({
     onSuccess: ({ data: { data } }) => {
       setAvailableEquipment(data);
     },
+    onError: (error) => {
+      if (
+        error?.response?.data?.message ===
+        'Attempt to read property "role_id" on null'
+      ) {
+        localStorage.removeItem('jwt');
+        history.replace('/login');
+      }
+    },
   });
 
   const { data: reservationResponse, isLoading } = useQuery(
@@ -53,6 +66,15 @@ export default function ReservationForm({
     () => getReservation(reservationId),
     {
       enabled: !!reservationId,
+      onError: (error) => {
+        if (
+          error?.response?.data?.message ===
+          'Attempt to read property "role_id" on null'
+        ) {
+          localStorage.removeItem('jwt');
+          history.replace('/login');
+        }
+      },
     }
   );
 
@@ -84,6 +106,13 @@ export default function ReservationForm({
       },
       onError: (error) => {
         console.log(error.response.data.message);
+        if (
+          error?.response?.data?.message ===
+          'Attempt to read property "role_id" on null'
+        ) {
+          localStorage.removeItem('jwt');
+          history.replace('/login');
+        }
       },
     }
   );
@@ -117,110 +146,112 @@ export default function ReservationForm({
 
   return (
     <Spin spinning={isLoading}>
-      <Space direction="vertical" size="large">
-        <div
-          className="info-container"
-          style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}
-        >
-          {reservationId && (
-            <div className="client-info">
-              <Descriptions
-                title="Klijent"
-                size="small"
-                column={1}
-                contentStyle={{ color: 'grey' }}
-              >
-                <Descriptions.Item label="Ime">
-                  {reservationResponse?.data.client.name}
-                </Descriptions.Item>
-                <Descriptions.Item label="Email">
-                  {reservationResponse?.data.client.email}
-                </Descriptions.Item>
-                <Descriptions.Item label="Telefon">
-                  {reservationResponse?.data.client.phone_no}
-                </Descriptions.Item>
-                <Descriptions.Item label="Broj lične/pasoša">
-                  {reservationResponse?.data.client.identification_document_no}
-                </Descriptions.Item>
-                <Descriptions.Item label="Država">
-                  {reservationResponse?.data.client.country.name}
-                </Descriptions.Item>
-              </Descriptions>
-            </div>
-          )}
-          <div className="vehicle-info">
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        {reservationId && (
+          <div className="client-info">
             <Descriptions
-              title="Vehicle"
+              title="Klijent"
+              bordered
               size="small"
               column={1}
+              labelStyle={{ width: '20ch' }}
               contentStyle={{ color: 'grey' }}
             >
-              <Descriptions.Item label="Broj registracije">
-                {reservationResponse?.data.vehicle.plate_no}
+              <Descriptions.Item label="Ime">
+                {reservationResponse?.data.client.name}
               </Descriptions.Item>
-              <Descriptions.Item label="Godina proizvodnje">
-                {reservationResponse?.data.vehicle.production_year}
+              <Descriptions.Item label="Email">
+                {reservationResponse?.data.client.email}
               </Descriptions.Item>
-              <Descriptions.Item label="Tip vozila">
-                {reservationResponse?.data.vehicle.car_type.name}
+              <Descriptions.Item label="Telefon">
+                {reservationResponse?.data.client.phone_no}
               </Descriptions.Item>
-              <Descriptions.Item label="Broj sjedišta">
-                {reservationResponse?.data.vehicle.no_of_seats}
+              <Descriptions.Item label="Broj lične/pasoša">
+                {reservationResponse?.data.client.identification_document_no}
               </Descriptions.Item>
-              <Descriptions.Item label="Cijena po danu">
-                {reservationResponse?.data.vehicle.price_per_day}€
+              <Descriptions.Item label="Država">
+                {reservationResponse?.data.client.country.name}
               </Descriptions.Item>
             </Descriptions>
           </div>
+        )}
+        <div className="vehicle-info">
+          <Descriptions
+            title="Vehicle"
+            size="small"
+            bordered
+            column={1}
+            labelStyle={{ width: '20ch' }}
+            contentStyle={{ color: 'grey' }}
+          >
+            <Descriptions.Item label="Broj registracije">
+              {reservationResponse?.data.vehicle.plate_no}
+            </Descriptions.Item>
+            <Descriptions.Item label="Godina proizvodnje">
+              {reservationResponse?.data.vehicle.production_year}
+            </Descriptions.Item>
+            <Descriptions.Item label="Tip vozila">
+              {reservationResponse?.data.vehicle.car_type.name}
+            </Descriptions.Item>
+            <Descriptions.Item label="Broj sjedišta">
+              {reservationResponse?.data.vehicle.no_of_seats}
+            </Descriptions.Item>
+            <Descriptions.Item label="Cijena po danu">
+              {reservationResponse?.data.vehicle.price_per_day}€
+            </Descriptions.Item>
+          </Descriptions>
         </div>
 
         {disabled && (
           <>
-            <div
-              className="info-container"
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                gap: 16,
-              }}
-            >
-              <div className="dates-info">
-                <Descriptions
-                  title="Datumi"
-                  size="small"
-                  column={1}
-                  contentStyle={{ color: 'grey' }}
-                >
-                  <Descriptions.Item label="Od">
-                    {reservationResponse?.data.from_date}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Do">
-                    {reservationResponse?.data.to_date}
-                  </Descriptions.Item>
-                </Descriptions>
-              </div>
-              <div className="locations-info">
-                <Descriptions
-                  title="Lokacije"
-                  size="small"
-                  column={1}
-                  contentStyle={{ color: 'grey', paddingRight: 16 }}
-                >
-                  <Descriptions.Item label="Preuzimanje">
-                    {reservationResponse?.data.rent_location.name}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Vraćanje">
-                    {reservationResponse?.data.return_location.name}
-                  </Descriptions.Item>
-                </Descriptions>
-              </div>
+            <div className="dates-info">
+              <Descriptions
+                title="Datumi"
+                size="small"
+                column={1}
+                bordered
+                labelStyle={{ width: '20ch' }}
+                contentStyle={{ color: 'grey' }}
+              >
+                <Descriptions.Item label="Od">
+                  {reservationResponse?.data.from_date}
+                </Descriptions.Item>
+                <Descriptions.Item label="Do">
+                  {reservationResponse?.data.to_date}
+                </Descriptions.Item>
+              </Descriptions>
+            </div>
+            <div className="locations-info">
+              <Descriptions
+                title="Lokacije"
+                size="small"
+                bordered
+                column={1}
+                labelStyle={{ width: '20ch' }}
+                contentStyle={{
+                  color: 'grey',
+                  paddingRight: 16,
+                }}
+              >
+                <Descriptions.Item label="Preuzimanje">
+                  {reservationResponse?.data.rent_location.name}
+                </Descriptions.Item>
+                <Descriptions.Item label="Vraćanje">
+                  {reservationResponse?.data.return_location.name}
+                </Descriptions.Item>
+              </Descriptions>
             </div>
             {reservationResponse?.data.equipment.length > 0 && (
               <Descriptions
                 title="Dodatna oprema"
                 size="small"
+                bordered
                 column={1}
-                contentStyle={{ color: 'grey', paddingRight: 16 }}
+                labelStyle={{ width: '20ch' }}
+                contentStyle={{
+                  color: 'grey',
+                  paddingRight: 16,
+                }}
               >
                 {reservationResponse?.data.equipment.map((equipment) => {
                   return (
@@ -244,6 +275,15 @@ export default function ReservationForm({
         <>
           <Divider />
           <Form onSubmitCapture={handleSubmit(onSubmit)} layout="vertical">
+            {!reservationId && (
+              <Form.Item label="Klijent">
+                <MyAsyncSelect
+                  queryFn={getClients}
+                  valueName="id"
+                  labelName="name"
+                />
+              </Form.Item>
+            )}
             <div style={{ display: 'flex', gap: 24 }}>
               <Form.Item
                 style={{ flex: 1, width: '100%' }}
@@ -386,13 +426,15 @@ export default function ReservationForm({
                 multiple
               />
             </Form.Item>
-            <Button
-              htmlType="submit"
-              type="primary"
-              loading={mutation.isLoading}
-            >
-              Sačuvaj
-            </Button>
+            <div className="form-actions">
+              <Button
+                htmlType="submit"
+                type="primary"
+                loading={mutation.isLoading}
+              >
+                Sačuvaj
+              </Button>
+            </div>
           </Form>
         </>
       )}

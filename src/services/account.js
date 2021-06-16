@@ -27,3 +27,11 @@ export const logout = () => {
     }
   );
 };
+
+export const changePassword = (data) => {
+  return ourApi.post('/auth/change-password', data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+  });
+};

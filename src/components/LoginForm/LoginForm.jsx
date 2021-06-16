@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, message, PageHeader } from 'antd';
+import { Button, Card, Form, Input, message, Typography } from 'antd';
 import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { Redirect, useHistory } from 'react-router';
@@ -40,53 +40,66 @@ export default function LoginForm() {
       {auth.jwt ? (
         <Redirect to="/" />
       ) : (
-        <>
-          <PageHeader title="Login" />
-          <Card>
-            <Form layout="vertical" onSubmitCapture={handleSubmit(onSubmit)}>
-              <Form.Item
-                label="Email"
-                help={errors.email && errors.email.message}
-                validateStatus={errors.email && 'error'}
-                hasFeedback
-              >
-                <Input
-                  placeholder="Unesite svoju email adresu..."
-                  {...register('email', {
-                    required: {
-                      value: true,
-                      message: 'Obavezno polje!',
-                    },
-                  })}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Lozinka"
-                help={errors.password && errors.password.message}
-                validateStatus={errors.password && 'error'}
-                hasFeedback
-              >
-                <Input
-                  type="password"
-                  placeholder="Unesite svoju lozinku..."
-                  {...register('password', {
-                    required: {
-                      value: true,
-                      message: 'Obavezno polje!',
-                    },
-                  })}
-                />
-              </Form.Item>
-              <Button
-                loading={mutation.isLoading}
-                type="primary"
-                htmlType="submit"
-              >
-                Uloguj se
-              </Button>
-            </Form>
-          </Card>
-        </>
+        <div
+          className="login-container"
+          style={{ display: 'flex', justifyContent: 'center' }}
+        >
+          <div style={{ width: '400px' }}>
+            <Typography.Title
+              level={3}
+              style={{ textAlign: 'center', marginBottom: 24 }}
+            >
+              Ulogujte se
+            </Typography.Title>
+            <Card>
+              <Form layout="vertical" onSubmitCapture={handleSubmit(onSubmit)}>
+                <Form.Item
+                  label="Email"
+                  help={errors.email && errors.email.message}
+                  validateStatus={errors.email && 'error'}
+                  hasFeedback
+                >
+                  <Input
+                    placeholder="Unesite svoju email adresu..."
+                    {...register('email', {
+                      required: {
+                        value: true,
+                        message: 'Obavezno polje!',
+                      },
+                    })}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Lozinka"
+                  help={errors.password && errors.password.message}
+                  validateStatus={errors.password && 'error'}
+                  hasFeedback
+                >
+                  <Input
+                    type="password"
+                    placeholder="Unesite svoju lozinku..."
+                    {...register('password', {
+                      required: {
+                        value: true,
+                        message: 'Obavezno polje!',
+                      },
+                    })}
+                  />
+                </Form.Item>
+                <div className="form-actions">
+                  <Button
+                    loading={mutation.isLoading}
+                    type="primary"
+                    htmlType="submit"
+                    block
+                  >
+                    Uloguj se
+                  </Button>
+                </div>
+              </Form>
+            </Card>
+          </div>
+        </div>
       )}
     </>
   );
