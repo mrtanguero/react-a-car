@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router';
 
-export default function PrivateRoute({ jwt, path, exact, children }) {
+export default function ProtectedRoute({ jwt, path, exact, children }) {
   return (
     <>
       {jwt ? (

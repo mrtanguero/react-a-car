@@ -2,7 +2,6 @@ import ourApi from './ourApi';
 
 export const getClients = ({ pageParam = 1, queryKey }) => {
   const { searchTerm } = queryKey[1];
-  console.log(pageParam, searchTerm);
   return ourApi.get(`/clients?page=${pageParam}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('jwt')}`,

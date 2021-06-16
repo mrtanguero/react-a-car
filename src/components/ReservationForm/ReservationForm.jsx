@@ -1,10 +1,19 @@
-import { Button, DatePicker, Form, message, Select, TreeSelect } from 'antd';
+import {
+  Button,
+  DatePicker,
+  Descriptions,
+  Divider,
+  Form,
+  message,
+  Select,
+  Space,
+  Spin,
+  TreeSelect,
+} from 'antd';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { renderEquipmentTreeOptions } from '../../helper/functions';
-import { getVehicles } from '../../services/cars';
-import { getClients } from '../../services/clients';
 import {
   getEquipment,
   getLocations,
@@ -13,14 +22,13 @@ import {
 } from '../../services/reservations';
 import moment from 'moment';
 
-import MyAsyncSelect from '../MyAsyncSelect/MyAsyncSelect';
 import { useEffect } from 'react';
 
-export default function ReservationForm({ reservationId, closeModal }) {
-  const [client, setClient] = useState(null);
-  const [clientInput, setClientInput] = useState('');
-  const [vehicle, setVehicle] = useState(null);
-  const [vehicleInput, setVehicleInput] = useState('');
+export default function ReservationForm({
+  reservationId,
+  closeModal,
+  disabled,
+}) {
   const [availableEquipment, setAvailableEquipment] = useState([]);
   const [equipmentData, setEquipmentData] = useState([]);
 
@@ -40,14 +48,11 @@ export default function ReservationForm({ reservationId, closeModal }) {
     },
   });
 
-  const { data: reservationResponse } = useQuery(
+  const { data: reservationResponse, isLoading } = useQuery(
     ['getReservation', reservationId],
     () => getReservation(reservationId),
     {
       enabled: !!reservationId,
-      onSuccess: ({ data }) => {
-        console.log(data);
-      },
     }
   );
 
@@ -65,8 +70,6 @@ export default function ReservationForm({ reservationId, closeModal }) {
         `${equipment.id}-${equipment.pivot.quantity}`,
       ]);
     });
-    setClientInput(reservationResponse?.data.client.name);
-    setVehicleInput(reservationResponse?.data.vehicle.plate_no);
   }, [reservationResponse, reset]);
 
   const mutation = useMutation(
@@ -99,8 +102,8 @@ export default function ReservationForm({ reservationId, closeModal }) {
 
     mutation.mutate({
       ...data,
-      client_id: client.value,
-      vehicle_id: vehicle.value,
+      client_id: reservationResponse?.data.client_id,
+      vehicle_id: reservationResponse?.data.vehicle_id,
       from_date: data.from_date.format('YYYY-MM-DD'),
       to_date: data.to_date.format('YYYY-MM-DD'),
       equipment: equipmentData.map((entry) => {
@@ -113,163 +116,285 @@ export default function ReservationForm({ reservationId, closeModal }) {
   };
 
   return (
-    <Form onSubmitCapture={handleSubmit(onSubmit)} layout="vertical">
-      <Form.Item label="Vozilo" name="car_id">
-        <MyAsyncSelect
-          queryFn={getClients}
-          inputValue={clientInput}
-          onInputChange={setClientInput}
-          value={client}
-          onChange={setClient}
-          valueName="id"
-          labelName="name"
-          placeholder={reservationResponse?.data.client.name}
-        />
-      </Form.Item>
-      <Form.Item label="Vozilo" name="client_id">
-        <MyAsyncSelect
-          queryFn={getVehicles}
-          value={vehicle}
-          inputValue={vehicleInput}
-          onInputChange={setVehicleInput}
-          onChange={setVehicle}
-          valueName="id"
-          labelName="plate_no"
-          placeholder={reservationResponse?.data.vehicle.plate_no}
-        />
-      </Form.Item>
-      <div style={{ display: 'flex', gap: 24 }}>
-        <Form.Item
-          style={{ flex: 1, width: '100%' }}
-          label="Od"
-          help={errors['from_date'] && errors['from_date'].message}
-          validateStatus={errors['from_date'] && 'error'}
-          hasFeedback
+    <Spin spinning={isLoading}>
+      <Space direction="vertical" size="large">
+        <div
+          className="info-container"
+          style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}
         >
-          <Controller
-            name="from_date"
-            control={control}
-            rules={{
-              required: {
-                value: true,
-                message: 'Obavezno polje.',
-              },
-            }}
-            render={({ field }) => (
-              <DatePicker
-                style={{ width: '100%' }}
-                {...field}
-                placeholder="Datum od"
-              />
-            )}
-          />
-        </Form.Item>
-        <Form.Item
-          style={{ flex: 1 }}
-          label="Do"
-          help={errors['to_date'] && errors['to_date'].message}
-          validateStatus={errors['to_date'] && 'error'}
-          hasFeedback
-        >
-          <Controller
-            name="to_date"
-            control={control}
-            rules={{
-              required: {
-                value: true,
-                message: 'Obavezno polje.',
-              },
-            }}
-            render={({ field }) => (
-              <DatePicker
-                style={{ width: '100%' }}
-                {...field}
-                placeholder="Datum do"
-              />
-            )}
-          />
-        </Form.Item>
-      </div>
-      <Form.Item
-        label="Lokacija preuzimanja"
-        help={errors['rent_location_id'] && errors['rent_location_id'].message}
-        validateStatus={errors['rent_location_id'] && 'error'}
-        hasFeedback
-      >
-        <Controller
-          name="rent_location_id"
-          control={control}
-          rules={{
-            required: {
-              value: true,
-              message: 'Obavezno polje',
-            },
-          }}
-          render={({ field }) => (
-            <Select
-              {...field}
-              showSearch={true}
-              optionFilterProp="label"
-              filterOption={(input, option) =>
-                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              placeholder="Odaberite klijenta"
-              options={
-                locationsResponse?.data.map((carType) => {
-                  return { label: carType.name, value: carType.id };
-                }) || []
-              }
-            />
+          {reservationId && (
+            <div className="client-info">
+              <Descriptions
+                title="Klijent"
+                size="small"
+                column={1}
+                contentStyle={{ color: 'grey' }}
+              >
+                <Descriptions.Item label="Ime">
+                  {reservationResponse?.data.client.name}
+                </Descriptions.Item>
+                <Descriptions.Item label="Email">
+                  {reservationResponse?.data.client.email}
+                </Descriptions.Item>
+                <Descriptions.Item label="Telefon">
+                  {reservationResponse?.data.client.phone_no}
+                </Descriptions.Item>
+                <Descriptions.Item label="Broj lične/pasoša">
+                  {reservationResponse?.data.client.identification_document_no}
+                </Descriptions.Item>
+                <Descriptions.Item label="Država">
+                  {reservationResponse?.data.client.country.name}
+                </Descriptions.Item>
+              </Descriptions>
+            </div>
           )}
-        />
-      </Form.Item>
-      <Form.Item
-        label="Lokacija vraćanja"
-        help={
-          errors['return_location_id'] && errors['return_location_id'].message
-        }
-        validateStatus={errors['return_location_id'] && 'error'}
-        hasFeedback
-      >
-        <Controller
-          name="return_location_id"
-          control={control}
-          rules={{
-            required: {
-              value: true,
-              message: 'Klijent je obavezan za rezervaciju',
-            },
-          }}
-          render={({ field }) => (
-            <Select
-              {...field}
-              showSearch={true}
-              optionFilterProp="label"
-              filterOption={(input, option) =>
-                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              placeholder="Odaberite klijenta"
-              options={
-                locationsResponse?.data.map((carType) => {
-                  return { label: carType.name, value: carType.id };
-                }) || []
-              }
-            />
-          )}
-        />
-      </Form.Item>
-      <Form.Item label="Dodatna oprema" hasFeedback>
-        <TreeSelect
-          name="equipment"
-          treeData={renderEquipmentTreeOptions(availableEquipment)}
-          onChange={handleTreeSelectChange}
-          value={equipmentData}
-          multiple
-        />
-      </Form.Item>
-      <Button htmlType="submit" type="primary" loading={mutation.isLoading}>
-        Sačuvaj
-      </Button>
-    </Form>
+          <div className="vehicle-info">
+            <Descriptions
+              title="Vehicle"
+              size="small"
+              column={1}
+              contentStyle={{ color: 'grey' }}
+            >
+              <Descriptions.Item label="Broj registracije">
+                {reservationResponse?.data.vehicle.plate_no}
+              </Descriptions.Item>
+              <Descriptions.Item label="Godina proizvodnje">
+                {reservationResponse?.data.vehicle.production_year}
+              </Descriptions.Item>
+              <Descriptions.Item label="Tip vozila">
+                {reservationResponse?.data.vehicle.car_type.name}
+              </Descriptions.Item>
+              <Descriptions.Item label="Broj sjedišta">
+                {reservationResponse?.data.vehicle.no_of_seats}
+              </Descriptions.Item>
+              <Descriptions.Item label="Cijena po danu">
+                {reservationResponse?.data.vehicle.price_per_day}€
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+        </div>
+
+        {disabled && (
+          <>
+            <div
+              className="info-container"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: 16,
+              }}
+            >
+              <div className="dates-info">
+                <Descriptions
+                  title="Datumi"
+                  size="small"
+                  column={1}
+                  contentStyle={{ color: 'grey' }}
+                >
+                  <Descriptions.Item label="Od">
+                    {reservationResponse?.data.from_date}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Do">
+                    {reservationResponse?.data.to_date}
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+              <div className="locations-info">
+                <Descriptions
+                  title="Lokacije"
+                  size="small"
+                  column={1}
+                  contentStyle={{ color: 'grey', paddingRight: 16 }}
+                >
+                  <Descriptions.Item label="Preuzimanje">
+                    {reservationResponse?.data.rent_location.name}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Vraćanje">
+                    {reservationResponse?.data.return_location.name}
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+            </div>
+            {reservationResponse?.data.equipment.length > 0 && (
+              <Descriptions
+                title="Dodatna oprema"
+                size="small"
+                column={1}
+                contentStyle={{ color: 'grey', paddingRight: 16 }}
+              >
+                {reservationResponse?.data.equipment.map((equipment) => {
+                  return (
+                    <Descriptions.Item
+                      label={`${equipment.name}${
+                        equipment.pivot.quantity > 1 ? 's' : ''
+                      }`}
+                    >
+                      {equipment.pivot.quantity}
+                    </Descriptions.Item>
+                  );
+                })}
+              </Descriptions>
+            )}
+          </>
+        )}
+      </Space>
+
+      {!disabled && (
+        <>
+          <Divider />
+          <Form onSubmitCapture={handleSubmit(onSubmit)} layout="vertical">
+            <div style={{ display: 'flex', gap: 24 }}>
+              <Form.Item
+                style={{ flex: 1, width: '100%' }}
+                label="Od"
+                help={errors['from_date'] && errors['from_date'].message}
+                validateStatus={errors['from_date'] && 'error'}
+                hasFeedback
+              >
+                <Controller
+                  name="from_date"
+                  control={control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: 'Obavezno polje.',
+                    },
+                  }}
+                  render={({ field }) => (
+                    <DatePicker
+                      style={{ width: '100%' }}
+                      {...field}
+                      placeholder="Datum od"
+                    />
+                  )}
+                />
+              </Form.Item>
+              <Form.Item
+                style={{ flex: 1 }}
+                label="Do"
+                help={errors['to_date'] && errors['to_date'].message}
+                validateStatus={errors['to_date'] && 'error'}
+                hasFeedback
+              >
+                <Controller
+                  name="to_date"
+                  control={control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: 'Obavezno polje.',
+                    },
+                  }}
+                  render={({ field }) => (
+                    <DatePicker
+                      style={{ width: '100%' }}
+                      {...field}
+                      placeholder="Datum do"
+                    />
+                  )}
+                />
+              </Form.Item>
+            </div>
+            <div style={{ display: 'flex', gap: 24 }}>
+              <Form.Item
+                label="Lokacija preuzimanja"
+                help={
+                  errors['rent_location_id'] &&
+                  errors['rent_location_id'].message
+                }
+                validateStatus={errors['rent_location_id'] && 'error'}
+                hasFeedback
+                style={{ flex: 1 }}
+              >
+                <Controller
+                  name="rent_location_id"
+                  control={control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: 'Obavezno polje',
+                    },
+                  }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      showSearch={true}
+                      optionFilterProp="label"
+                      filterOption={(input, option) =>
+                        option.label
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                      placeholder="Odaberite klijenta"
+                      options={
+                        locationsResponse?.data.map((carType) => {
+                          return { label: carType.name, value: carType.id };
+                        }) || []
+                      }
+                    />
+                  )}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Lokacija vraćanja"
+                help={
+                  errors['return_location_id'] &&
+                  errors['return_location_id'].message
+                }
+                validateStatus={errors['return_location_id'] && 'error'}
+                style={{ flex: 1 }}
+                hasFeedback
+              >
+                <Controller
+                  name="return_location_id"
+                  control={control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: 'Klijent je obavezan za rezervaciju',
+                    },
+                  }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      showSearch={true}
+                      optionFilterProp="label"
+                      filterOption={(input, option) =>
+                        option.label
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                      placeholder="Odaberite klijenta"
+                      options={
+                        locationsResponse?.data.map((carType) => {
+                          return { label: carType.name, value: carType.id };
+                        }) || []
+                      }
+                    />
+                  )}
+                />
+              </Form.Item>
+            </div>
+            <Form.Item label="Dodatna oprema" hasFeedback>
+              <TreeSelect
+                name="equipment"
+                treeData={renderEquipmentTreeOptions(availableEquipment)}
+                onChange={handleTreeSelectChange}
+                value={equipmentData}
+                placeholder="Unesite dodatnu opremu"
+                multiple
+              />
+            </Form.Item>
+            <Button
+              htmlType="submit"
+              type="primary"
+              loading={mutation.isLoading}
+            >
+              Sačuvaj
+            </Button>
+          </Form>
+        </>
+      )}
+    </Spin>
   );
 }

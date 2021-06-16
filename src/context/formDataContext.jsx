@@ -1,3 +1,4 @@
+import { Spin } from 'antd';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 // import { useEffect } from 'react';
@@ -21,26 +22,30 @@ export const FormDataProvider = ({ children, vehicleId }) => {
   const [data, setData] = useState({});
   const [queryIsEnabled, setQueryIsEnabled] = useState(!!vehicleId);
 
-  useQuery(['getVehicle', vehicleId], () => getVehicle(vehicleId), {
-    enabled: queryIsEnabled,
-    onSuccess: ({ data }) => {
-      setData({
-        ...data,
-        photoDeleteList: [],
-        photos: {
-          fileList: data?.photos?.map((photo) => {
-            return {
-              uid: photo.id,
-              name: `${photo.id}.${photo.photo.split('.').pop()}`,
-              thumbUrl: `http://127.0.0.1:8000/${photo.photo}`,
-            };
-          }),
-        },
-      });
-      setQueryIsEnabled(false);
-    },
-    onError: (error) => console.log(error.response),
-  });
+  const { isLoading } = useQuery(
+    ['getVehicle', vehicleId],
+    () => getVehicle(vehicleId),
+    {
+      enabled: queryIsEnabled,
+      onSuccess: ({ data }) => {
+        setData({
+          ...data,
+          photoDeleteList: [],
+          photos: {
+            fileList: data?.photos?.map((photo) => {
+              return {
+                uid: photo.id,
+                name: `${photo.id}.${photo.photo.split('.').pop()}`,
+                thumbUrl: `http://127.0.0.1:8000/${photo.photo}`,
+              };
+            }),
+          },
+        });
+        setQueryIsEnabled(false);
+      },
+      onError: (error) => console.log(error.response),
+    }
+  );
 
   const setValues = (values) => {
     setData({
@@ -55,7 +60,7 @@ export const FormDataProvider = ({ children, vehicleId }) => {
 
   return (
     <formDataContext.Provider value={{ data, setValues, setData }}>
-      {children}
+      <Spin spinning={isLoading}>{children}</Spin>
     </formDataContext.Provider>
   );
 };

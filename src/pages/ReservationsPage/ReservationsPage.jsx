@@ -81,7 +81,11 @@ export default function ReservationsPage() {
       visible: true,
       title: `Showing data for reservation ${id}`,
       children: (
-        <ReservationForm reservationId={id} closeModal={handleCancelModal} />
+        <ReservationForm
+          reservationId={id}
+          closeModal={handleCancelModal}
+          disabled={true}
+        />
       ),
       onOk: () => {},
       onCancel: handleCancelModal,
