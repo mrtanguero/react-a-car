@@ -1,8 +1,10 @@
-import { Card, Collapse } from 'antd';
+import { Col, Collapse, PageHeader, Row } from 'antd';
 import React, { useContext, useState } from 'react';
 import { useQuery } from 'react-query';
 import authContext from '../../context/authContext';
 import { getReservations } from '../../services/reservations';
+import { CaretRightOutlined } from '@ant-design/icons';
+import ReservationCard from '../../components/ReservationCard/ReservationCard';
 
 const { Panel } = Collapse;
 
@@ -20,66 +22,76 @@ export default function HomePage() {
   return (
     <>
       {auth?.user?.roleId === 1 && (
+        // TODO: Dodati styling ovoj poruci
         <div>Dobrodošli u aplikaciju {auth?.user?.name}!</div>
       )}
       {auth?.user?.roleId === 2 && (
         <>
-          <Collapse accordion defaultActiveKey={['1']}>
+          <PageHeader title="Vaše rezervacije" />
+          <Collapse
+            accordion
+            defaultActiveKey={['1']}
+            expandIcon={({ isActive }) => (
+              <CaretRightOutlined rotate={isActive ? 90 : 0} />
+            )}
+          >
             <Panel header="Buduće rezervacije" key="1">
-              {reservations
-                .filter(
-                  (reservation) =>
-                    new Date(reservation.from_date).getTime() >
-                    new Date().getTime()
-                )
-                .map((reservation) => {
-                  return (
-                    <Card style={{ width: 300 }} key={reservation.id}>
-                      <p>{reservation.vehicle.plate_no}</p>
-                      <p>
-                        {reservation.from_date}-{reservation.to_date}
-                      </p>
-                    </Card>
-                  );
-                })}
+              <Row gutter={[16, 16]}>
+                {reservations
+                  .filter(
+                    (reservation) =>
+                      new Date(reservation.from_date).getTime() >
+                      new Date().setHours(0, 0, 0, 0)
+                  )
+                  .sort(
+                    (a, b) =>
+                      new Date(b.created_at).getTime() -
+                      new Date(a.created_at).getTime()
+                  )
+                  .map((reservation) => {
+                    return (
+                      <Col xs={24} md={12} lg={8} key={reservation.id}>
+                        <ReservationCard reservation={reservation} />
+                      </Col>
+                    );
+                  })}
+              </Row>
             </Panel>
             <Panel header="Rezervacije u toku" key="2">
-              {reservations
-                .filter(
-                  (reservation) =>
-                    new Date(reservation.from_date).getTime() <
-                      new Date().getTime() &&
-                    new Date(reservation.to_date).getTime() >
-                      new Date().getTime()
-                )
-                .map((reservation) => {
-                  return (
-                    <Card style={{ width: 300 }}>
-                      <p>{reservation.vehicle.plate_no}</p>
-                      <p>
-                        {reservation.from_date}-{reservation.to_date}
-                      </p>
-                    </Card>
-                  );
-                })}
+              <Row gutter={[16, 16]}>
+                {reservations
+                  .filter(
+                    (reservation) =>
+                      new Date(reservation.from_date).getTime() <=
+                        new Date().setHours(0, 0, 0, 0) &&
+                      new Date(reservation.to_date).getTime() >=
+                        new Date().setHours(0, 0, 0, 0)
+                  )
+                  .map((reservation) => {
+                    return (
+                      <Col xs={24} sm={12} lg={8} key={reservation.id}>
+                        <ReservationCard reservation={reservation} />
+                      </Col>
+                    );
+                  })}
+              </Row>
             </Panel>
             <Panel header="Prošle rezervacije" key="3">
-              {reservations
-                .filter(
-                  (reservation) =>
-                    new Date(reservation.to_date).getTime() <
-                    new Date().getTime()
-                )
-                .map((reservation) => {
-                  return (
-                    <Card style={{ width: 300 }}>
-                      <p>{reservation.vehicle.plate_no}</p>
-                      <p>
-                        {reservation.from_date}-{reservation.to_date}
-                      </p>
-                    </Card>
-                  );
-                })}
+              <Row gutter={[16, 16]}>
+                {reservations
+                  .filter(
+                    (reservation) =>
+                      new Date(reservation.to_date).getTime() <
+                      new Date().setHours(0, 0, 0, 0)
+                  )
+                  .map((reservation) => {
+                    return (
+                      <Col xs={24} sm={12} lg={8} key={reservation.id}>
+                        <ReservationCard reservation={reservation} />
+                      </Col>
+                    );
+                  })}
+              </Row>
             </Panel>
           </Collapse>
         </>

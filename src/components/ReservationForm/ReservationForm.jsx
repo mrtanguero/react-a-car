@@ -34,6 +34,7 @@ export default function ReservationForm({
   selectedDates,
   closeModal,
   disabled,
+  hideClient,
 }) {
   const [availableEquipment, setAvailableEquipment] = useState([]);
   const [equipmentData, setEquipmentData] = useState([]);
@@ -189,7 +190,7 @@ export default function ReservationForm({
   return (
     <Spin spinning={isLoading}>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        {reservationId && (
+        {reservationId && !hideClient && (
           <div className="client-info">
             <Descriptions
               title="Klijent"
