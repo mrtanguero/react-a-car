@@ -24,7 +24,7 @@ export default function LoginForm() {
     },
     onError: (error) => {
       if (error.response.data.error === 'Unauthorized') {
-        message.error('Jeste li sigurni da su vam to email i password?');
+        message.error('Pogrešni kredencijali.');
       } else {
         message.error(error.response.data.error);
       }

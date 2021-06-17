@@ -13,10 +13,10 @@ import { currentTotalLength } from '../../helper/functions';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import modalContext from '../../context/modalContext';
-import CreateReservationForm from '../../components/CreateReservationForm/CreateReservationForm';
 import { getAvailableVehicles } from '../../services/cars';
 import { getCarTypes } from '../../services/carTypes';
 import { useEffect } from 'react';
+import ReservationForm from '../../components/ReservationForm/ReservationForm';
 
 const { RangePicker } = DatePicker;
 
@@ -97,7 +97,7 @@ export default function CreateReservationPage() {
       visible: true,
       title: `Forma za kreiranje rezervacije za vozilo ${record.id}`,
       children: (
-        <CreateReservationForm
+        <ReservationForm
           vehicleData={record}
           selectedDates={reservationDates}
           closeModal={handleCancelModal}

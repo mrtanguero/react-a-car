@@ -1,7 +1,7 @@
 import ourApi from './ourApi';
 
-export const getClients = ({ pageParam = 1, queryKey }) => {
-  const { searchTerm } = queryKey[1];
+export const getClients = ({ pageParam = 1, queryKey = [null, {}] }) => {
+  const { searchTerm = '' } = queryKey[1];
   return ourApi.get(`/clients?page=${pageParam}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('jwt')}`,

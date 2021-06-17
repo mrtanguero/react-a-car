@@ -8,6 +8,7 @@ import {
   Table,
   Modal,
   message,
+  Input,
 } from 'antd';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
@@ -22,14 +23,17 @@ import { deleteVehicle, getVehicles } from '../../services/cars';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import { currentTotalLength } from '../../helper/functions';
 import MultiStepForm from '../../components/MultiStepForm/MultiStepForm';
+// import Input from 'react-select/src/components/Input';
 
 const { confirm } = Modal;
+const { Search } = Input;
 
 export default function CarsPage() {
   const modalCtx = useContext(modalContext);
   const [intersectionObserverTarget, setIntersectionObserverTarget] = useState(
     null
   );
+  const [searchTerm, setSearchTerm] = useState('');
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const mutation = useMutation((id) => deleteVehicle(id), {
@@ -49,7 +53,7 @@ export default function CarsPage() {
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-  } = useInfiniteQuery('vehicles', getVehicles, {
+  } = useInfiniteQuery(['vehicles', { searchTerm }], getVehicles, {
     getNextPageParam: (lastPage) => {
       const isLastPage = lastPage.data.current_page === lastPage.data.last_page;
       return isLastPage ? false : lastPage.data.current_page + 1;
@@ -112,6 +116,10 @@ export default function CarsPage() {
     });
   };
 
+  const onSearch = (data) => {
+    setSearchTerm(data);
+  };
+
   if (error) console.log(error.response);
 
   return (
@@ -120,10 +128,18 @@ export default function CarsPage() {
         ghost={true}
         title={t('navigation.vehicles')}
         extra={
-          <Button onClick={handleNewVehicleClick}>
-            <CarOutlined />
-            {t('buttons.newCar')}
-          </Button>
+          <>
+            <Search
+              placeholder="Pretraži"
+              onSearch={onSearch}
+              style={{ width: 200 }}
+              loading={isFetching}
+            />
+            <Button onClick={handleNewVehicleClick}>
+              <CarOutlined />
+              {t('buttons.newCar')}
+            </Button>
+          </>
         }
       />
       <Card>

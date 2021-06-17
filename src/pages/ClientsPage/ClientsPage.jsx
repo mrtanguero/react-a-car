@@ -8,6 +8,7 @@ import {
   Table,
   Modal,
   message,
+  Input,
 } from 'antd';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
@@ -24,9 +25,11 @@ import { currentTotalLength } from '../../helper/functions';
 import ClientForm from '../../components/ClientForm/ClientForm';
 
 const { confirm } = Modal;
+const { Search } = Input;
 
 export default function ClientsPage() {
   const modalCtx = useContext(modalContext);
+  const [searchTerm, setSearchTerm] = useState('');
   const [intersectionObserverTarget, setIntersectionObserverTarget] = useState(
     null
   );
@@ -41,8 +44,6 @@ export default function ClientsPage() {
       message.error(error.response.data.message);
     },
   });
-
-  const searchTerm = '';
 
   const {
     data: response,
@@ -114,7 +115,11 @@ export default function ClientsPage() {
     });
   };
 
-  if (error) console.log(error.response);
+  const onSearch = (data) => {
+    setSearchTerm(data);
+  };
+
+  if (error) console.log(error.response.data.message);
 
   return (
     <>
@@ -122,10 +127,18 @@ export default function ClientsPage() {
         ghost={true}
         title={t('navigation.clients')}
         extra={
-          <Button onClick={handleNewClientClick}>
-            <UserAddOutlined />
-            {t('buttons.newClient')}
-          </Button>
+          <>
+            <Search
+              placeholder="Pretraži"
+              onSearch={onSearch}
+              style={{ width: 200 }}
+              loading={isFetching}
+            />
+            <Button onClick={handleNewClientClick}>
+              <UserAddOutlined />
+              {t('buttons.newClient')}
+            </Button>
+          </>
         }
       />
       <Card>
@@ -139,17 +152,17 @@ export default function ClientsPage() {
               width: 180,
             },
             {
-              title: 'Country',
-              dataIndex: ['country', 'name'],
-              key: 'country',
-              width: 150,
-            },
-            {
               title: 'ID document number',
               dataIndex: 'identification_document_no',
               key: 'document-id',
               width: 150,
               ellipsis: true,
+            },
+            {
+              title: 'Phone',
+              dataIndex: 'phone_no',
+              key: 'phone',
+              width: 150,
             },
             {
               title: 'Email',
@@ -158,9 +171,9 @@ export default function ClientsPage() {
               width: 200,
             },
             {
-              title: 'Phone',
-              dataIndex: 'phone_no',
-              key: 'phone',
+              title: 'Country',
+              dataIndex: ['country', 'name'],
+              key: 'country',
               width: 150,
             },
             {

@@ -15,6 +15,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { renderEquipmentTreeOptions } from '../../helper/functions';
 import {
+  createReservation,
   getEquipment,
   getLocations,
   getReservation,
@@ -24,11 +25,13 @@ import moment from 'moment';
 
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import MyAsyncSelect from '../../components/MyAsyncSelect/MyAsyncSelect';
 import { getClients } from '../../services/clients';
+import DebounceSelect from '../DebounceSelect/DebounceSelect';
 
 export default function ReservationForm({
   reservationId,
+  vehicleData,
+  selectedDates,
   closeModal,
   disabled,
 }) {
@@ -44,6 +47,7 @@ export default function ReservationForm({
     formState: { errors },
     handleSubmit,
   } = useForm();
+
   const { data: locationsResponse } = useQuery('locations', getLocations);
 
   useQuery('equipment', getEquipment, {
@@ -79,22 +83,46 @@ export default function ReservationForm({
   );
 
   useEffect(() => {
-    reset({
-      from_date: moment(reservationResponse?.data.from_date),
-      to_date: moment(reservationResponse?.data.to_date),
-      rent_location_id: reservationResponse?.data.rent_location_id,
-      return_location_id: reservationResponse?.data.return_location_id,
-    });
-    setEquipmentData(() => []);
-    reservationResponse?.data.equipment.forEach((equipment) => {
-      setEquipmentData((old) => [
-        ...old,
-        `${equipment.id}-${equipment.pivot.quantity}`,
-      ]);
-    });
-  }, [reservationResponse, reset]);
+    if (reservationId) {
+      reset({
+        from_date: moment(reservationResponse?.data.from_date),
+        to_date: moment(reservationResponse?.data.to_date),
+        rent_location_id: reservationResponse?.data.rent_location_id,
+        return_location_id: reservationResponse?.data.return_location_id,
+      });
+      setEquipmentData(() => []);
+      reservationResponse?.data.equipment.forEach((equipment) => {
+        setEquipmentData((old) => [
+          ...old,
+          `${equipment.id}-${equipment.pivot.quantity}`,
+        ]);
+      });
+    }
+  }, [reservationId, reservationResponse, reset]);
 
-  const mutation = useMutation(
+  useEffect(() => {
+    if (vehicleData?.id) {
+      reset({
+        from_date: moment(selectedDates[0]),
+        to_date: moment(selectedDates[1]),
+        vehicle_id: vehicleData.id,
+      });
+    }
+  }, [vehicleData, selectedDates, reset]);
+
+  const createMutation = useMutation('createReservation', createReservation, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('reservations');
+      closeModal();
+      reset();
+      message.success('Sačuvano!');
+    },
+    onError: (error) => {
+      console.log(error.response.data.message);
+    },
+  });
+
+  const updateMutation = useMutation(
     ['updateReservation', reservationId],
     (data) => updateReservation(data, reservationId),
     {
@@ -127,21 +155,35 @@ export default function ReservationForm({
   };
 
   const onSubmit = (data) => {
-    console.log(data);
-
-    mutation.mutate({
-      ...data,
-      client_id: reservationResponse?.data.client_id,
-      vehicle_id: reservationResponse?.data.vehicle_id,
-      from_date: data.from_date.format('YYYY-MM-DD'),
-      to_date: data.to_date.format('YYYY-MM-DD'),
-      equipment: equipmentData.map((entry) => {
-        return {
-          equipment_id: entry.split('-')[0],
-          quantity: entry.split('-')[1],
-        };
-      }),
-    });
+    if (reservationId) {
+      updateMutation.mutate({
+        ...data,
+        client_id: reservationResponse?.data.client_id,
+        vehicle_id: reservationResponse?.data.vehicle_id,
+        from_date: data.from_date.format('YYYY-MM-DD'),
+        to_date: data.to_date.format('YYYY-MM-DD'),
+        equipment: equipmentData.map((entry) => {
+          return {
+            equipment_id: entry.split('-')[0],
+            quantity: entry.split('-')[1],
+          };
+        }),
+      });
+    } else {
+      createMutation.mutate({
+        ...data,
+        client: undefined,
+        client_id: data.client.value,
+        from_date: data.from_date.format('YYYY-MM-DD'),
+        to_date: data.to_date.format('YYYY-MM-DD'),
+        equipment: equipmentData.map((entry) => {
+          return {
+            equipment_id: entry.split('-')[0],
+            quantity: entry.split('-')[1],
+          };
+        }),
+      });
+    }
   };
 
   return (
@@ -185,19 +227,25 @@ export default function ReservationForm({
             contentStyle={{ color: 'grey' }}
           >
             <Descriptions.Item label="Broj registracije">
-              {reservationResponse?.data.vehicle.plate_no}
+              {vehicleData?.plate_no ||
+                reservationResponse?.data.vehicle.plate_no}
             </Descriptions.Item>
             <Descriptions.Item label="Godina proizvodnje">
-              {reservationResponse?.data.vehicle.production_year}
+              {vehicleData?.production_year ||
+                reservationResponse?.data.vehicle.production_year}
             </Descriptions.Item>
             <Descriptions.Item label="Tip vozila">
-              {reservationResponse?.data.vehicle.car_type.name}
+              {vehicleData?.car_type.name ||
+                reservationResponse?.data.vehicle.car_type.name}
             </Descriptions.Item>
             <Descriptions.Item label="Broj sjedišta">
-              {reservationResponse?.data.vehicle.no_of_seats}
+              {vehicleData?.no_of_seats ||
+                reservationResponse?.data.vehicle.no_of_seats}
             </Descriptions.Item>
             <Descriptions.Item label="Cijena po danu">
-              {reservationResponse?.data.vehicle.price_per_day}€
+              {vehicleData?.price_per_day ||
+                reservationResponse?.data.vehicle.price_per_day}
+              €
             </Descriptions.Item>
           </Descriptions>
         </div>
@@ -277,10 +325,21 @@ export default function ReservationForm({
           <Form onSubmitCapture={handleSubmit(onSubmit)} layout="vertical">
             {!reservationId && (
               <Form.Item label="Klijent">
-                <MyAsyncSelect
-                  queryFn={getClients}
-                  valueName="id"
-                  labelName="name"
+                <Controller
+                  name="client"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <DebounceSelect
+                        {...field}
+                        placeholder="Odaberite klijenta"
+                        fetchOptions={getClients}
+                        style={{
+                          width: '100%',
+                        }}
+                      />
+                    );
+                  }}
                 />
               </Form.Item>
             )}
@@ -430,7 +489,7 @@ export default function ReservationForm({
               <Button
                 htmlType="submit"
                 type="primary"
-                loading={mutation.isLoading}
+                loading={updateMutation.isLoading || createMutation.isLoading}
               >
                 Sačuvaj
               </Button>
