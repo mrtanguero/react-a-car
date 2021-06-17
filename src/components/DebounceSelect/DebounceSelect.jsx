@@ -7,6 +7,20 @@ const DebounceSelect = React.forwardRef(
     const [fetching, setFetching] = React.useState(false);
     const [options, setOptions] = React.useState([]);
     const fetchRef = React.useRef(0);
+    const getOptionsOnFocus = async (value) => {
+      setOptions([]);
+      setFetching(true);
+      const response = await fetchOptions({ pageParam: 1 });
+      const renderedOptions = response.data.data.map((client) => {
+        return {
+          value: client.id,
+          label: client.name,
+        };
+      });
+      setOptions(renderedOptions);
+      setFetching(false);
+    };
+
     const debounceFetcher = React.useMemo(() => {
       const loadOptions = (value) => {
         fetchRef.current += 1;
@@ -38,10 +52,11 @@ const DebounceSelect = React.forwardRef(
       <Select
         labelInValue
         showSearch
-        filterOption={false}
         onSearch={debounceFetcher}
+        onFocus={getOptionsOnFocus}
         notFoundContent={fetching ? <Spin size="small" /> : null}
         options={options}
+        filterOption={false}
         ref={ref}
         {...props}
       />
