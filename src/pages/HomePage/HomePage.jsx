@@ -1,22 +1,10 @@
-import {
-  Card,
-  Col,
-  Collapse,
-  PageHeader,
-  Row,
-  Typography,
-  Form,
-  Button,
-} from 'antd';
+import { Card, Col, Collapse, PageHeader, Row, Typography } from 'antd';
 import React, { useContext, useState } from 'react';
 import { useQuery } from 'react-query';
 import authContext from '../../context/authContext';
 import { getReservations } from '../../services/reservations';
 import { CaretRightOutlined } from '@ant-design/icons';
 import ReservationCard from '../../components/ReservationCard/ReservationCard';
-import MyAsyncSelect from '../../components/MyAsyncSelect/MyAsyncSelect';
-import { getClients } from '../../services/clients';
-import { Controller, useForm } from 'react-hook-form';
 
 const { Panel } = Collapse;
 
@@ -24,18 +12,12 @@ export default function HomePage() {
   const auth = useContext(authContext);
   const [reservations, setReservations] = useState([]);
 
-  const { handleSubmit, control } = useForm();
-
   useQuery('getUserReservations', getReservations, {
     onSuccess: ({ data: { data } }) => {
       setReservations(data);
     },
     enabled: auth?.user?.roleId === 2,
   });
-  // !OBRIŠI OVO
-  const onSubmit = (data) => {
-    console.log(data);
-  };
 
   return (
     <>
@@ -49,28 +31,6 @@ export default function HomePage() {
             <Typography.Title level={3} style={{ marginTop: 8 }}>
               Dobrodošli u aplikaciju, {auth?.user?.name}!
             </Typography.Title>
-            {/* TESTING */}
-            <Form onSubmitCapture={handleSubmit(onSubmit)}>
-              <Form.Item label="Korisnik">
-                <Controller
-                  name="client"
-                  control={control}
-                  render={({ field }) => {
-                    return (
-                      <MyAsyncSelect
-                        {...field}
-                        placeholder="Odaberite korisnika"
-                        queryFn={getClients}
-                        labelName="name"
-                        valueName="id"
-                      />
-                    );
-                  }}
-                />
-              </Form.Item>
-              <Button htmlType="submit">Submit</Button>
-            </Form>
-            {/* TESTING */}
           </Card>
         </div>
       )}

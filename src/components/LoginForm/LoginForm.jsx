@@ -6,6 +6,8 @@ import { useMutation } from 'react-query';
 import authContext from '../../context/authContext';
 import { login } from '../../services/account';
 
+const emailRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 export default function LoginForm() {
   const auth = useContext(authContext);
   const history = useHistory();
@@ -66,6 +68,10 @@ export default function LoginForm() {
                         value: true,
                         message: 'Obavezno polje!',
                       },
+                      pattern: {
+                        value: emailRegEx,
+                        message: 'Morate unijeti validnu email adresu',
+                      },
                     })}
                   />
                 </Form.Item>
@@ -82,6 +88,19 @@ export default function LoginForm() {
                       required: {
                         value: true,
                         message: 'Obavezno polje!',
+                      },
+                      minLength: {
+                        value: 4,
+                        message: 'Minimalna dužina passworda je 4 karaktera',
+                      },
+                      maxLength: {
+                        value: 12,
+                        message: 'Maksimalna dužina passworda je 12 karaktera',
+                      },
+                      pattern: {
+                        value: /^[A-Za-z0-9!#%&]+$/i,
+                        message:
+                          'Samo mala i velika slova i karakteri !, #, % i &',
                       },
                     })}
                   />

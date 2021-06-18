@@ -45,9 +45,12 @@ export default function ReservationForm({
   const {
     control,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm();
+
+  const watchDates = watch(['from_date', 'to_date']);
 
   const { data: locationsResponse } = useQuery('locations', getLocations);
 
@@ -84,7 +87,7 @@ export default function ReservationForm({
   );
 
   useEffect(() => {
-    if (reservationId) {
+    if (reservationId && setAvailableEquipment.length !== 0) {
       reset({
         from_date: moment(reservationResponse?.data.from_date),
         to_date: moment(reservationResponse?.data.to_date),
@@ -493,6 +496,24 @@ export default function ReservationForm({
                 multiple
               />
             </Form.Item>
+            <div>
+              UKUPNA CIJENA:{' '}
+              {watchDates[0] && watchDates[1]
+                ? (Math.ceil(
+                    Math.abs(
+                      (new Date(watchDates[1].format('YYYY-MM-DD')) -
+                        new Date(watchDates[0].format('YYYY-MM-DD'))) /
+                        (1000 * 60 * 60 * 24)
+                    )
+                  ) +
+                    1) *
+                  +(
+                    vehicleData?.price_per_day ||
+                    reservationResponse?.data.vehicle.price_per_day
+                  )
+                : null}
+              €
+            </div>
             <div className="form-actions">
               <Button
                 htmlType="submit"

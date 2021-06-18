@@ -54,6 +54,10 @@ export default function FirstStep({ setStep }) {
               value: true,
               message: 'Broj tablica je obavezan',
             },
+            minLength: {
+              value: 7,
+              message: 'Minimalni 7 karaktera',
+            },
           }}
           render={({ field }) => (
             <Input
@@ -174,6 +178,14 @@ export default function FirstStep({ setStep }) {
               value: true,
               message: 'Cijena je obavezno polje',
             },
+            min: {
+              value: 30,
+              message: 'Minimalna cijena vozila po danu je 30EUR',
+            },
+            max: {
+              value: 150,
+              message: 'Maksimalna cijena vozila po danu je 150EUR',
+            },
           }}
           render={({ field }) => (
             <Input
@@ -201,7 +213,7 @@ export default function FirstStep({ setStep }) {
             <TextArea
               {...field}
               rows={4}
-              placeholder="Unesite godinu proizvodnje"
+              placeholder="Unesite dodatne primjedbe"
             />
           )}
         />

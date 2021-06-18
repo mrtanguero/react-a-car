@@ -7,6 +7,8 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getCountries } from '../../services/countries';
 import { createClient, getClient, updateClient } from '../../services/clients';
 
+const emailRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 export default function ClientForm({ clientId, disabled, onCancel }) {
   const [clientQueryEnabled, setClientQueryEnabled] = useState(false);
   const queryClient = useQueryClient();
@@ -26,6 +28,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
     handleSubmit,
     control,
     reset,
+    setError,
     formState: { errors },
   } = useForm({
     defaultValues: clientsResponse?.data.client,
@@ -55,6 +58,24 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
       },
       onError: (error) => {
         console.log(error.response);
+        if (
+          error.response.data.message ===
+          'The identification document no has already been taken.'
+        ) {
+          setError('identification_document_no', {
+            type: 'manual',
+            message: 'Ovaj broj lične karte ili pasoša već postoji u bazi',
+          });
+        }
+
+        if (
+          error.response.data.message === 'The email has already been taken.'
+        ) {
+          setError('identification_document_no', {
+            type: 'manual',
+            message: 'Ovaj email već postoji u bazi.',
+          });
+        }
       },
     }
   );
@@ -105,6 +126,14 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
                 value: true,
                 message: 'Ime i prezime su obavezni',
               },
+              minLength: {
+                value: 5,
+                message: 'Minimalno 5 karaktera',
+              },
+              maxLength: {
+                value: 30,
+                message: 'Maksimalno 30 karaktera',
+              },
             }}
             render={({ field }) => (
               <Input
@@ -130,6 +159,10 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
                 value: true,
                 message: 'Email je obavezan',
               },
+              pattern: {
+                value: emailRegEx,
+                message: 'Morate unijeti validnu email adresu',
+              },
             }}
             render={({ field }) => (
               <Input
@@ -154,6 +187,10 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
               required: {
                 value: true,
                 message: 'Broj telefona je obavezan',
+              },
+              pattern: {
+                value: /^[0-9]+$/i,
+                message: 'Unesite samo cifre, bez dodatnih simbola',
               },
             }}
             render={({ field }) => (

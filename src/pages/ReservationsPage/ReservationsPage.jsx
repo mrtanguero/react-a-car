@@ -171,6 +171,13 @@ export default function ReservationsPage() {
               width: 150,
             },
             {
+              title: 'Ukupna cijena',
+              dataIndex: ['total_price'],
+              key: 'price',
+              width: 120,
+              render: (_, record) => `${record.total_price}€`,
+            },
+            {
               title: 'Akcije',
               key: 'action',
               align: 'center',
