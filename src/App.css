@@ -5,15 +5,27 @@
 }
 
 #root > .ant-layout {
-  height: 100vh;
+  min-height: 100vh;
+}
+
+.ant-layout-footer {
+  color: grey;
+  font-size: 0.8rem;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .ant-layout-header .logo {
   float: left;
-  width: 120px;
-  height: 31px;
-  margin: 16px 24px 16px 0;
-  background: rgba(255, 255, 255, 0.3);
+  height: 100%;
+  padding: 0 20px;
+  display: flex;
+  color: white;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 .ant-menu-root.ant-menu-horizontal {
@@ -31,4 +43,14 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 32px;
+}
+
+.ant-menu-root.ant-menu-horizontal {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.ant-page-header.ant-page-header-ghost {
+  padding-top: 0;
 }

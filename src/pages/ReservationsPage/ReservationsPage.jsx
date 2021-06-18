@@ -60,6 +60,16 @@ export default function ReservationsPage() {
       return isLastPage ? false : lastPage.data.current_page + 1;
     },
     refetchOnWindowFocus: false,
+    onError: (error) => {
+      if (
+        error.response.data.message ===
+          'Attempt to read property "role_id" on null' ||
+        error.response.data.message === 'Unauthenticated.'
+      ) {
+        localStorage.clear();
+        history.replace('/login');
+      }
+    },
   });
 
   useIntersectionObserver({

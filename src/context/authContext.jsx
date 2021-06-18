@@ -21,12 +21,18 @@ export const AuthProvider = (props) => {
   const { data: response, isSuccess, error } = useQuery('account', getAccount, {
     refetchOnWindowFocus: false,
     enabled: !!jwt,
+    retry: false,
   });
 
   if (error && jwt) {
-    localStorage.removeItem('jwt');
+    localStorage.clear();
     setJwt('');
     setUser(null);
+    history.replace('/login');
+  }
+
+  if (!localStorage.getItem('jwt')) {
+    localStorage.clear();
     history.replace('/login');
   }
 

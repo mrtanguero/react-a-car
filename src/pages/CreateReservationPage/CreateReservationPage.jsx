@@ -8,6 +8,7 @@ import {
   Spin,
   Table,
   Select,
+  Typography,
 } from 'antd';
 import { currentTotalLength } from '../../helper/functions';
 import { useInfiniteQuery, useQuery } from 'react-query';
@@ -185,7 +186,9 @@ export default function CreateReservationPage() {
             }}
           />
         ) : (
-          'The results will go here'
+          <div style={{ textAlign: 'center' }}>
+            <Typography>Odaberite datume i tip vozila</Typography>
+          </div>
         )}
         <div
           style={{

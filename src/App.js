@@ -45,12 +45,12 @@ const App = () => {
         <Route path="/unauthorized">
           <Page403 />
         </Route>
-        <Route path="/404">
+        <ProtectedRoute auth={auth} path="/404">
           <Page404 />
-        </Route>
-        <Route path="*">
+        </ProtectedRoute>
+        <ProtectedRoute auth={auth} path="*">
           <Redirect to="/404" />
-        </Route>
+        </ProtectedRoute>
       </Switch>
       <Modal {...modalCtx.modalProps} />
     </MainLayout>

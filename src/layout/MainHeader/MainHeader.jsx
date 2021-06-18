@@ -109,7 +109,7 @@ export default function MainHeader({
 
   return (
     <Header className="header">
-      <div className="logo" />
+      <div className="logo">REACT-A-CAR</div>
       <Menu
         theme="dark"
         mode="horizontal"

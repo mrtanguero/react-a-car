@@ -26,7 +26,7 @@ import moment from 'moment';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getClients } from '../../services/clients';
-import DebounceSelect from '../DebounceSelect/DebounceSelect';
+import MyAsyncSelect from '../MyAsyncSelect/MyAsyncSelect';
 
 export default function ReservationForm({
   reservationId,
@@ -331,14 +331,21 @@ export default function ReservationForm({
                   control={control}
                   render={({ field }) => {
                     return (
-                      <DebounceSelect
+                      <MyAsyncSelect
                         {...field}
-                        placeholder="Odaberite klijenta"
-                        fetchOptions={getClients}
-                        style={{
-                          width: '100%',
-                        }}
+                        placeholder="Odaberite korisnika"
+                        queryFn={getClients}
+                        labelName="name"
+                        valueName="id"
                       />
+                      // <DebounceSelect
+                      //   {...field}
+                      //   placeholder="Odaberite klijenta"
+                      //   fetchOptions={getClients}
+                      //   style={{
+                      //     width: '100%',
+                      //   }}
+                      // />
                     );
                   }}
                 />
