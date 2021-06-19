@@ -1,0 +1,12 @@
+.reservation-form-container {
+  display: flex;
+  gap: 24px;
+}
+
+/* display: 'flex', gap: 24 */
+@media screen and (max-width: 480px) {
+  .reservation-form-container {
+    flex-direction: column;
+    gap: 0;
+  }
+}

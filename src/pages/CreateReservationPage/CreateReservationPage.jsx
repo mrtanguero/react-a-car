@@ -9,6 +9,7 @@ import {
   Table,
   Select,
   Typography,
+  message,
 } from 'antd';
 import { currentTotalLength } from '../../helper/functions';
 import { useInfiniteQuery, useQuery } from 'react-query';
@@ -18,8 +19,6 @@ import { getAvailableVehicles } from '../../services/cars';
 import { getCarTypes } from '../../services/carTypes';
 import { useEffect } from 'react';
 import ReservationForm from '../../components/ReservationForm/ReservationForm';
-
-const { RangePicker } = DatePicker;
 
 export default function CreateReservationPage() {
   const [reservationDates, setReservationDates] = useState([null, null]);
@@ -64,8 +63,19 @@ export default function CreateReservationPage() {
           lastPage?.data?.current_page === lastPage?.data?.last_page;
         return isLastPage ? false : lastPage?.data?.current_page + 1;
       },
-      onError: (error) => console.log(error.response.data.message),
+      onError: (error) => {
+        if (
+          error.response.data.message ===
+          'The end date must be a date after or equal to start date.'
+        ) {
+          message.error(
+            'Datum završetka rezervacije ne smije biti prije datuma početka rezervacije'
+          );
+        }
+        console.log(error.response.data.message);
+      },
       refetchOnWindowFocus: false,
+      retry: 0,
     }
   );
 
@@ -81,12 +91,17 @@ export default function CreateReservationPage() {
 
   const handleSearch = () => {
     if (reservationDates[0] && reservationDates[1] && carType) {
+      console.log(reservationDates);
       setQueryEnabled(true);
     }
   };
 
-  const handleDatesChange = (date, dateString) => {
-    setReservationDates([dateString[0], dateString[1]]);
+  const handleFromDateChange = (date, dateString) => {
+    setReservationDates([date.format('YYYY-MM-DD'), reservationDates[1]]);
+  };
+
+  const handleToDateChange = (date, dateString) => {
+    setReservationDates([reservationDates[0], date.format('YYYY-MM-DD')]);
   };
 
   const handleCarTypeChange = (value) => {
@@ -115,9 +130,19 @@ export default function CreateReservationPage() {
       <PageHeader
         ghost={true}
         title="Napravi novu rezervaciju"
+        className="reservation-create-page-header"
         extra={
           <>
-            <RangePicker onChange={handleDatesChange} />
+            <DatePicker
+              onChange={handleFromDateChange}
+              placeholder="Datum od"
+              format="DD.MM.YYYY."
+            />
+            <DatePicker
+              onChange={handleToDateChange}
+              placeholder="Datum do"
+              format="DD.MM.YYYY."
+            />
             <Select
               placeholder="Odaberite tip vozila"
               onChange={handleCarTypeChange}

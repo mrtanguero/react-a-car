@@ -132,7 +132,7 @@ export default function CarsPage() {
             <Search
               placeholder="Pretraži"
               onSearch={onSearch}
-              style={{ width: 200 }}
+              // style={{ width: 200 }}
               loading={isFetching}
             />
             <Button onClick={handleNewVehicleClick}>
@@ -232,7 +232,7 @@ export default function CarsPage() {
           }
           rowKey={(record) => record.id}
           pagination={false}
-          scroll={{ x: '100%', y: '400px' }}
+          scroll={{ x: '100%', y: '60vh' }}
           size="small"
           onRow={(record, index) => {
             return {

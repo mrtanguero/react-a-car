@@ -1,3 +1,4 @@
+import './ReservationForm.css';
 import {
   Button,
   DatePicker,
@@ -336,7 +337,7 @@ export default function ReservationForm({
                     return (
                       <MyAsyncSelect
                         {...field}
-                        placeholder="Odaberite korisnika"
+                        placeholder="Odaberite klijenta"
                         queryFn={getClients}
                         labelName="name"
                         valueName="id"
@@ -354,7 +355,10 @@ export default function ReservationForm({
                 />
               </Form.Item>
             )}
-            <div style={{ display: 'flex', gap: 24 }}>
+            <div
+              className="reservation-form-container reservation-dates"
+              // style={{ display: 'flex', gap: 24 }}
+            >
               <Form.Item
                 style={{ flex: 1, width: '100%' }}
                 label="Od"
@@ -376,6 +380,7 @@ export default function ReservationForm({
                       style={{ width: '100%' }}
                       {...field}
                       placeholder="Datum od"
+                      format="DD.MM.YYYY."
                     />
                   )}
                 />
@@ -401,12 +406,16 @@ export default function ReservationForm({
                       style={{ width: '100%' }}
                       {...field}
                       placeholder="Datum do"
+                      format="DD.MM.YYYY."
                     />
                   )}
                 />
               </Form.Item>
             </div>
-            <div style={{ display: 'flex', gap: 24 }}>
+            <div
+              className="reservation-form-container location-dates"
+              // style={{ display: 'flex', gap: 24 }}
+            >
               <Form.Item
                 label="Lokacija preuzimanja"
                 help={
@@ -436,7 +445,7 @@ export default function ReservationForm({
                           .toLowerCase()
                           .indexOf(input.toLowerCase()) >= 0
                       }
-                      placeholder="Odaberite klijenta"
+                      placeholder="Odaberite lokaciju preuzimanja"
                       options={
                         locationsResponse?.data.map((carType) => {
                           return { label: carType.name, value: carType.id };
@@ -475,7 +484,7 @@ export default function ReservationForm({
                           .toLowerCase()
                           .indexOf(input.toLowerCase()) >= 0
                       }
-                      placeholder="Odaberite klijenta"
+                      placeholder="Odaberite lokaciju vraćanja"
                       options={
                         locationsResponse?.data.map((carType) => {
                           return { label: carType.name, value: carType.id };

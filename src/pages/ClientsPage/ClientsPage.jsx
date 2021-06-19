@@ -131,7 +131,7 @@ export default function ClientsPage() {
             <Search
               placeholder="Pretraži"
               onSearch={onSearch}
-              style={{ width: 200 }}
+              // style={{ width: 200 }}
               loading={isFetching}
             />
             <Button onClick={handleNewClientClick}>

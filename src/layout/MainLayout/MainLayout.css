@@ -6,10 +6,65 @@
   padding: 64px 0 0 0;
 }
 
+.hamburger-menu svg {
+  font-size: 1.2rem;
+  margin-bottom: -3px;
+}
+
+span.ant-page-header-heading-extra {
+  display: flex;
+  gap: 12px;
+}
+
+.ant-page-header-heading-extra .ant-picker {
+  min-width: 25%;
+}
+
+.ant-page-header-heading-extra button {
+  margin-left: 0;
+}
+.ant-page-header-heading-extra .ant-input-group-wrapper.ant-input-search {
+  width: 200px;
+}
+
+.reservation-create-page-header .ant-page-header-heading-extra {
+  flex-wrap: wrap;
+}
+
+.reservation-create-page-header
+  .ant-select.ant-select-single.ant-select-show-arrow,
+.reservation-create-page-header .ant-picker {
+  margin-left: 0;
+}
+
+/* MEDIA QUERIES */
 @media only screen and (min-width: 768px) {
   .ant-menu-root .hamburger-menu,
   .main-drawer {
     display: none;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .reservation-create-page-header .ant-page-header-heading-left {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .reservation-create-page-header {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .reservation-create-page-header .ant-page-header-heading {
+    flex-wrap: wrap;
+  }
+  .reservation-create-page-header .ant-page-header-heading-extra {
+    width: 100%;
+    justify-content: center;
+  }
+  .reservation-create-page-header .ant-page-header-heading-extra > * {
+    flex: 1;
   }
 }
 
@@ -23,5 +78,53 @@
   .main-header-logout,
   .main-header-user {
     display: none !important;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .ant-layout-header.header {
+    padding: 0 24px;
+  }
+
+  section.ant-layout {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .ant-page-header.ant-page-header-ghost {
+    padding: 0 0 16px 0;
+  }
+
+  .ant-page-header-heading-left {
+    width: 100%;
+    justify-content: center;
+  }
+
+  span.ant-page-header-heading-extra {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ant-page-header-heading-extra button,
+  .ant-page-header-heading-extra .ant-input-group-wrapper.ant-input-search {
+    flex: 1;
+  }
+
+  /* .ant-page-header-heading-extra .ant-picker {
+    width: calc(50%-12px);
+  } */
+}
+
+@media screen and (max-width: 480px) {
+  .ant-layout-header.header {
+    padding: 0px;
+  }
+
+  span.ant-page-header-heading-extra {
+    flex-direction: column;
+  }
+
+  .ant-page-header-heading-extra .ant-input-group-wrapper.ant-input-search {
+    width: 100%;
   }
 }
