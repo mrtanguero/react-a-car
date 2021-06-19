@@ -136,7 +136,7 @@ export default function MainDrawer({
           title={auth?.user?.name?.split(' ')[0]}
         >
           <Menu.Item icon={<LockOutlined />} key="user:password-change">
-            Promijeni lozinku
+            {t('navigation.changePassword')}
           </Menu.Item>
           <Menu.Item
             key="logout"

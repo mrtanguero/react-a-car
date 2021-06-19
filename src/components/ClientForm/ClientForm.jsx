@@ -6,11 +6,13 @@ import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getCountries } from '../../services/countries';
 import { createClient, getClient, updateClient } from '../../services/clients';
+import { useTranslation } from 'react-i18next';
 
 const emailRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export default function ClientForm({ clientId, disabled, onCancel }) {
   const [clientQueryEnabled, setClientQueryEnabled] = useState(false);
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const { data: countriesResponse } = useQuery('getCountries', getCountries);
@@ -19,7 +21,6 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
     () => getClient(clientId),
     {
       enabled: clientQueryEnabled,
-      // TODO: neki error handling
       onError: (error) => console.log(error.response),
     }
   );
@@ -52,7 +53,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
     (data) => createClient(data),
     {
       onSuccess: () => {
-        message.success('Created!');
+        message.success(t('successMessages.created'));
         queryClient.invalidateQueries('clients');
         onCancel();
       },
@@ -64,7 +65,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
         ) {
           setError('identification_document_no', {
             type: 'manual',
-            message: 'Ovaj broj lične karte ili pasoša već postoji u bazi',
+            message: t('errorMessages.takenIdNo'),
           });
         }
 
@@ -73,7 +74,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
         ) {
           setError('identification_document_no', {
             type: 'manual',
-            message: 'Ovaj email već postoji u bazi.',
+            message: t('takenEmail'),
           });
         }
       },
@@ -85,12 +86,12 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
     (data) => updateClient(data, clientId),
     {
       onSuccess: () => {
-        message.success('Updated!');
+        message.success(t('successMessages.updated'));
         queryClient.invalidateQueries('clients');
         onCancel();
       },
       onError: (error) => {
-        console.log(error.response);
+        console.log(error.response.data.message);
       },
     }
   );
@@ -113,7 +114,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
     <Spin spinning={isLoading}>
       <Form layout="vertical" onSubmitCapture={handleSubmit(onSubmit)}>
         <Form.Item
-          label="Ime i prezime"
+          label={t('formLabels.fullName')}
           help={errors['name'] && errors['name'].message}
           validateStatus={errors['name'] && 'error'}
           hasFeedback
@@ -124,29 +125,29 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
             rules={{
               required: {
                 value: true,
-                message: 'Ime i prezime su obavezni',
+                message: t('errorMessages.requiredField'),
               },
               minLength: {
                 value: 5,
-                message: 'Minimalno 5 karaktera',
+                message: t('errorMessages.minCharsGeneric', { num: 5 }),
               },
               maxLength: {
                 value: 30,
-                message: 'Maksimalno 30 karaktera',
+                message: t('errorMessages.maxCharsGeneric', { num: 30 }),
               },
             }}
             render={({ field }) => (
               <Input
                 {...field}
                 disabled={disabled}
-                placeholder="Unesite ime i prezime..."
+                placeholder={t('placeholders.clientName')}
               />
             )}
           />
         </Form.Item>
 
         <Form.Item
-          label="Email"
+          label={t('formLabels.email')}
           help={errors['email'] && errors['email'].message}
           validateStatus={errors['email'] && 'error'}
           hasFeedback
@@ -157,25 +158,25 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
             rules={{
               required: {
                 value: true,
-                message: 'Email je obavezan',
+                message: t('errorMessages.requiredField'),
               },
               pattern: {
                 value: emailRegEx,
-                message: 'Morate unijeti validnu email adresu',
+                message: t('errorMessages.emailInvalid'),
               },
             }}
             render={({ field }) => (
               <Input
                 {...field}
                 disabled={disabled}
-                placeholder="Unesite email adresu..."
+                placeholder={t('placeholders.clientEmail')}
               />
             )}
           />
         </Form.Item>
 
         <Form.Item
-          label="Broj telefona"
+          label={t('formLabels.phone')}
           help={errors['phone_no'] && errors['phone_no'].message}
           validateStatus={errors['phone_no'] && 'error'}
           hasFeedback
@@ -186,25 +187,25 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
             rules={{
               required: {
                 value: true,
-                message: 'Broj telefona je obavezan',
+                message: t('errorMessages.requiredField'),
               },
               pattern: {
                 value: /^[0-9]+$/i,
-                message: 'Unesite samo cifre, bez dodatnih simbola',
+                message: t('errorMessages.onlyNumbers'),
               },
             }}
             render={({ field }) => (
               <Input
                 {...field}
                 disabled={disabled}
-                placeholder="Unesite broj telefona..."
+                placeholder={t('placeholders.clientPhone')}
               />
             )}
           />
         </Form.Item>
 
         <Form.Item
-          label="Broj pasoša / lične karte"
+          label={t('formLabels.IdDoc')}
           help={
             errors['identification_document_no'] &&
             errors['identification_document_no'].message
@@ -218,21 +219,21 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
             rules={{
               required: {
                 value: true,
-                message: 'Broj pasoša / lične karte je obavezan',
+                message: t('errorMessages.requiredField'),
               },
             }}
             render={({ field }) => (
               <Input
                 {...field}
                 disabled={disabled}
-                placeholder="Unesite broj pasoša / lične karte..."
+                placeholder={t('placeholders.clientIdNo')}
               />
             )}
           />
         </Form.Item>
 
         <Form.Item
-          label="Država"
+          label={t('formLabels.country')}
           help={errors['country_id'] && errors['country_id'].message}
           validateStatus={errors['country_id'] && 'error'}
           hasFeedback
@@ -243,7 +244,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
             rules={{
               required: {
                 value: true,
-                message: 'Obavezno je odabrati državu',
+                message: t('errorMessages.requiredField'),
               },
             }}
             render={({ field }) => (
@@ -251,7 +252,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
                 {...field}
                 showSearch
                 disabled={disabled}
-                placeholder="Odaberite državu"
+                placeholder={t('placeholders.clientState')}
                 optionFilterProp="label"
                 options={
                   countriesResponse?.data.map((country) => {
@@ -275,7 +276,7 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
             loading={createMutation.isLoading || updateMutation.isLoading}
             htmlType="submit"
           >
-            Submit
+            {t('buttons.save')}
           </Button>
         </div>
       </Form>

@@ -26,6 +26,7 @@ import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import { currentTotalLength } from '../../helper/functions';
 import ReservationForm from '../../components/ReservationForm/ReservationForm';
 import { useHistory } from 'react-router-dom';
+import authContext from '../../context/authContext';
 
 const { confirm } = Modal;
 
@@ -35,12 +36,13 @@ export default function ReservationsPage() {
   const [intersectionObserverTarget, setIntersectionObserverTarget] = useState(
     null
   );
+  const auth = useContext(authContext);
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const mutation = useMutation((id) => deleteReservation(id), {
     onSuccess: () => {
       queryClient.invalidateQueries('reservations');
-      message.success('Deleted!');
+      message.success(t('successMessages.deleted'));
     },
     onError: () => {
       message.error(error.response.data.message);
@@ -67,6 +69,8 @@ export default function ReservationsPage() {
         error.response.data.message === 'Unauthenticated.'
       ) {
         localStorage.clear();
+        auth.setJwt('');
+        auth.setUser(null);
         history.replace('/login');
       }
     },
@@ -89,7 +93,7 @@ export default function ReservationsPage() {
   const handleShowReservation = (id) => {
     modalCtx.setModalProps({
       visible: true,
-      title: `Showing data for reservation ${id}`,
+      title: t('modals.showReservation', { reservationId: id }),
       children: (
         <ReservationForm
           reservationId={id}
@@ -106,7 +110,7 @@ export default function ReservationsPage() {
   const handleEditReservationClick = (id) => {
     modalCtx.setModalProps({
       visible: true,
-      title: `Edit reservation ${id}`,
+      title: t('modals.editReservation', { reservationId: id }),
       children: (
         <ReservationForm reservationId={id} closeModal={handleCancelModal} />
       ),
@@ -135,50 +139,50 @@ export default function ReservationsPage() {
           loading={!response?.pages.length && isFetching}
           columns={[
             {
-              title: 'Klijent',
+              title: t('tableHeaders.client'),
               dataIndex: ['client', 'name'],
               key: 'name',
               width: 180,
             },
             {
-              title: 'Vozilo',
+              title: t('tableHeaders.vehicle'),
               dataIndex: ['vehicle', 'plate_no'],
               key: 'country',
               width: 120,
             },
             {
-              title: 'Od',
+              title: t('tableHeaders.from'),
               dataIndex: 'from_date',
               key: 'document-id',
               width: 100,
             },
             {
-              title: 'Do',
+              title: t('tableHeaders.to'),
               dataIndex: 'to_date',
               key: 'email',
               width: 100,
             },
             {
-              title: 'Lokacija preuzimanja',
+              title: t('tableHeaders.rentLocation'),
               dataIndex: ['rent_location', 'name'],
               key: 'phone',
               width: 150,
             },
             {
-              title: 'Lokacija vraćanja',
+              title: t('tableHeaders.returnLocation'),
               dataIndex: ['return_location', 'name'],
               key: 'phone',
               width: 150,
             },
             {
-              title: 'Ukupna cijena',
+              title: t('tableHeaders.totalPrice'),
               dataIndex: ['total_price'],
               key: 'price',
               width: 120,
               render: (_, record) => `${record.total_price}€`,
             },
             {
-              title: 'Akcije',
+              title: t('tableHeaders.actions'),
               key: 'action',
               align: 'center',
               width: 100,
@@ -196,7 +200,7 @@ export default function ReservationsPage() {
                     onClick={(e) => {
                       e.stopPropagation();
                       confirm({
-                        title: 'Do you want to delete this reservation?',
+                        title: t('modals.confirmReservationDelete'),
                         icon: <ExclamationCircleOutlined />,
                         content: `This action is not reversible!`,
                         okType: 'danger',

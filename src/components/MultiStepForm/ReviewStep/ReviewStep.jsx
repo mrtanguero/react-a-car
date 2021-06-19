@@ -8,6 +8,7 @@ import {
   deletePhoto,
   updateVehicle,
 } from '../../../services/cars';
+import { useTranslation } from 'react-i18next';
 
 export default function ReviewStep({
   setStep,
@@ -16,6 +17,7 @@ export default function ReviewStep({
   disabled,
 }) {
   const { data, setData } = useContext(formDataContext);
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const deletePhotoMutation = useMutation('deletePhoto', deletePhoto, {
@@ -118,14 +120,14 @@ export default function ReviewStep({
           <Divider />
           <div className="form-actions">
             <Button style={{ margin: '0 8px' }} onClick={() => setStep(1)}>
-              Korak nazad
+              {t('buttons.back')}
             </Button>
             <Button
               type="primary"
               loading={createCarMutation.isLoading}
               onClick={handleSubmit}
             >
-              Sačuvaj
+              {t('buttons.save')}
             </Button>
           </div>
         </>

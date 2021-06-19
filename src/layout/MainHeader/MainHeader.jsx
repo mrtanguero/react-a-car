@@ -90,7 +90,7 @@ export default function MainHeader({
   const handlePasswordChangeClick = () => {
     modalCtx.setModalProps({
       visible: true,
-      title: 'Promijenite lozinku',
+      title: t('modals.changePassword'),
       children: <PasswordChangeForm closeModal={handleCancelModal} />,
       onOk: () => {},
       onCancel: handleCancelModal,
@@ -162,7 +162,7 @@ export default function MainHeader({
                 key="user:password-change"
                 onClick={handlePasswordChangeClick}
               >
-                Promijeni lozinku
+                {t('navigation.changePassword')}
               </Menu.Item>
               <Menu.Item
                 key="logout"

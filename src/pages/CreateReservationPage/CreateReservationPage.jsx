@@ -19,6 +19,7 @@ import { getAvailableVehicles } from '../../services/cars';
 import { getCarTypes } from '../../services/carTypes';
 import { useEffect } from 'react';
 import ReservationForm from '../../components/ReservationForm/ReservationForm';
+import { useTranslation } from 'react-i18next';
 
 export default function CreateReservationPage() {
   const [reservationDates, setReservationDates] = useState([null, null]);
@@ -31,8 +32,7 @@ export default function CreateReservationPage() {
   );
 
   const { data: carTypesResponse } = useQuery('getCarTypes', getCarTypes);
-  // const { t } = useTranslation();
-  // const queryClient = useQueryClient();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     if (!(reservationDates[0] && reservationDates[1] && carType)) {
@@ -111,7 +111,7 @@ export default function CreateReservationPage() {
   const onVehicleSelect = (record) => {
     modalCtx.setModalProps({
       visible: true,
-      title: `Forma za kreiranje rezervacije za vozilo ${record.id}`,
+      title: t('modals.createReservation', { id: record.id }),
       children: (
         <ReservationForm
           vehicleData={record}
@@ -129,22 +129,22 @@ export default function CreateReservationPage() {
     <>
       <PageHeader
         ghost={true}
-        title="Napravi novu rezervaciju"
+        title={t('pageHeaders.createReservation')}
         className="reservation-create-page-header"
         extra={
           <>
             <DatePicker
               onChange={handleFromDateChange}
-              placeholder="Datum od"
-              format="DD.MM.YYYY."
+              placeholder={t('placeholders.from')}
+              format={i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'}
             />
             <DatePicker
               onChange={handleToDateChange}
-              placeholder="Datum do"
-              format="DD.MM.YYYY."
+              placeholder={t('placeholders.to')}
+              format={i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'}
             />
             <Select
-              placeholder="Odaberite tip vozila"
+              placeholder={t('placeholders.vehicleType')}
               onChange={handleCarTypeChange}
               options={
                 carTypesResponse?.data.data.map((carType) => {
@@ -153,7 +153,7 @@ export default function CreateReservationPage() {
               }
             />
             <Button icon={<SearchOutlined />} onClick={handleSearch}>
-              Pretraži
+              {t('buttons.search')}
             </Button>
           </>
         }
@@ -164,25 +164,25 @@ export default function CreateReservationPage() {
             loading={!response?.pages.length && isFetching}
             columns={[
               {
-                title: 'Licence plate',
+                title: t('tableHeaders.plateNo'),
                 dataIndex: 'plate_no',
                 key: 'plates',
                 width: 105,
               },
               {
-                title: 'Year',
+                title: t('tableHeaders.year'),
                 dataIndex: 'production_year',
                 key: 'year',
                 width: 80,
               },
               {
-                title: 'Seats',
+                title: t('tableHeaders.seatsNum'),
                 dataIndex: 'no_of_seats',
                 key: 'seats',
                 width: 80,
               },
               {
-                title: 'Price per day',
+                title: t('tableHeaders.pricePerDay'),
                 dataIndex: 'price_per_day',
                 key: 'price',
                 width: 120,
@@ -212,7 +212,7 @@ export default function CreateReservationPage() {
           />
         ) : (
           <div style={{ textAlign: 'center' }}>
-            <Typography>Odaberite datume i tip vozila</Typography>
+            <Typography>{t('content.pickDatesAndType')}</Typography>
           </div>
         )}
         <div

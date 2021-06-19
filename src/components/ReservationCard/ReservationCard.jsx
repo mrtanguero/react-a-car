@@ -1,11 +1,13 @@
 import { Card, Descriptions } from 'antd';
 import React from 'react';
 import { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import modalContext from '../../context/modalContext';
 import ReservationForm from '../ReservationForm/ReservationForm';
 
 export default function ReservationCard({ reservation }) {
   const modalCtx = useContext(modalContext);
+  const { t } = useTranslation();
 
   const handleCancelModal = () => {
     modalCtx.setModalProps({ ...modalCtx.modalProps, visible: false });
@@ -14,7 +16,7 @@ export default function ReservationCard({ reservation }) {
   const handleCardClick = (reservationId) => {
     modalCtx.setModalProps({
       visible: true,
-      title: `Showing data for reservation ${reservationId}`,
+      title: t('modals.showReservation', { reservationId }),
       children: (
         <ReservationForm
           reservationId={reservationId}

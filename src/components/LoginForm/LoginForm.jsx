@@ -5,12 +5,14 @@ import { Redirect, useHistory } from 'react-router';
 import { useMutation } from 'react-query';
 import authContext from '../../context/authContext';
 import { login } from '../../services/account';
+import { useTranslation } from 'react-i18next';
 
 const emailRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export default function LoginForm() {
   const auth = useContext(authContext);
   const history = useHistory();
+  const { t } = useTranslation();
 
   const {
     register,
@@ -26,7 +28,7 @@ export default function LoginForm() {
     },
     onError: (error) => {
       if (error.response.data.error === 'Unauthorized') {
-        message.error('Pogrešni kredencijali.');
+        message.error(t('errorMessages.unauthorized'));
       } else {
         message.error(error.response.data.error);
       }
@@ -51,56 +53,55 @@ export default function LoginForm() {
               level={3}
               style={{ textAlign: 'center', marginBottom: 24 }}
             >
-              Ulogujte se
+              {t('pageHeaders.login')}
             </Typography.Title>
             <Card>
               <Form layout="vertical" onSubmitCapture={handleSubmit(onSubmit)}>
                 <Form.Item
-                  label="Email"
+                  label={t('tableHeaders.email')}
                   help={errors.email && errors.email.message}
                   validateStatus={errors.email && 'error'}
                   hasFeedback
                 >
                   <Input
-                    placeholder="Unesite svoju email adresu..."
+                    placeholder={t('placeholders.yourEmail')}
                     {...register('email', {
                       required: {
                         value: true,
-                        message: 'Obavezno polje!',
+                        message: t('errorMessages.requiredField'),
                       },
                       pattern: {
                         value: emailRegEx,
-                        message: 'Morate unijeti validnu email adresu',
+                        message: t('errorMessages.emailInvalid'),
                       },
                     })}
                   />
                 </Form.Item>
                 <Form.Item
-                  label="Lozinka"
+                  label={t('formLabels.password')}
                   help={errors.password && errors.password.message}
                   validateStatus={errors.password && 'error'}
                   hasFeedback
                 >
                   <Input
                     type="password"
-                    placeholder="Unesite svoju lozinku..."
+                    placeholder={t('placeholders.password')}
                     {...register('password', {
                       required: {
                         value: true,
-                        message: 'Obavezno polje!',
+                        message: t('errorMessages.requiredField'),
                       },
                       minLength: {
                         value: 4,
-                        message: 'Minimalna dužina passworda je 4 karaktera',
+                        message: t('errorMessages.minPassLength'),
                       },
                       maxLength: {
                         value: 12,
-                        message: 'Maksimalna dužina passworda je 12 karaktera',
+                        message: t('errorMessages.maxPassLength'),
                       },
                       pattern: {
                         value: /^[A-Za-z0-9!#%&]+$/i,
-                        message:
-                          'Samo mala i velika slova i karakteri !, #, % i &',
+                        message: t('errorMessages.allowedChars'),
                       },
                     })}
                   />
@@ -112,7 +113,7 @@ export default function LoginForm() {
                     htmlType="submit"
                     block
                   >
-                    Uloguj se
+                    {t('buttons.login')}
                   </Button>
                 </div>
               </Form>

@@ -4,11 +4,13 @@ import React, { useContext, useEffect } from 'react';
 import formDataContext from '../../../context/formDataContext';
 import { getCarTypes } from '../../../services/carTypes';
 import { useQuery } from 'react-query';
+import { useTranslation } from 'react-i18next';
 
 const { TextArea } = Input;
 
 export default function FirstStep({ setStep }) {
   const { data, setValues } = useContext(formDataContext);
+  const { t } = useTranslation();
 
   const { data: carTypesResponse } = useQuery('getCarTypes', getCarTypes);
 
@@ -41,7 +43,7 @@ export default function FirstStep({ setStep }) {
   return (
     <Form onSubmitCapture={handleSubmit(onSubmit)} layout="vertical">
       <Form.Item
-        label="Broj tablica"
+        label={t('formLabels.plateNo')}
         help={errors['plate_no'] && errors['plate_no'].message}
         validateStatus={errors['plate_no'] && 'error'}
         hasFeedback
@@ -52,24 +54,21 @@ export default function FirstStep({ setStep }) {
           rules={{
             required: {
               value: true,
-              message: 'Broj tablica je obavezan',
+              message: t('errorMessages.requiredField'),
             },
             minLength: {
               value: 7,
-              message: 'Minimalni 7 karaktera',
+              message: t('errorMessages.minCharsGeneric', { num: 7 }),
             },
           }}
           render={({ field }) => (
-            <Input
-              {...field}
-              placeholder="Unesite registarske oznake vozila..."
-            />
+            <Input {...field} placeholder={t('placeholders.platesNo')} />
           )}
         />
       </Form.Item>
 
       <Form.Item
-        label="Godina proizvodnje"
+        label={t('formLabels.year')}
         help={errors['production_year'] && errors['production_year'].message}
         validateStatus={errors['production_year'] && 'error'}
         hasFeedback
@@ -81,29 +80,29 @@ export default function FirstStep({ setStep }) {
           rules={{
             required: {
               value: true,
-              message: 'Godina proizvodnje je obavezno polje.',
+              message: t('errorMessages.requiredField'),
             },
             min: {
               value: 1950,
-              message: 'Vozilo mora biti novije od 1950. godine',
+              message: t('errorMessages.carTooOld'),
             },
             max: {
               value: new Date().getFullYear(),
-              message: 'Godina proizvodnje ne može biti u budućnosti',
+              message: t('errorMessages.noFuture'),
             },
           }}
           render={({ field }) => (
             <Input
               {...field}
               type="number"
-              placeholder="Unesite godinu proizvodnje"
+              placeholder={t('placeholders.productionYear')}
             />
           )}
         />
       </Form.Item>
 
       <Form.Item
-        label="Tip vozila"
+        label={t('formLabels.carType')}
         help={errors['car_type_id'] && errors['car_type_id'].message}
         validateStatus={errors['car_type_id'] && 'error'}
         hasFeedback
@@ -114,13 +113,13 @@ export default function FirstStep({ setStep }) {
           rules={{
             required: {
               value: true,
-              message: 'Obavezno je odabrati tip vozila',
+              message: t('errorMessages.requiredField'),
             },
           }}
           render={({ field }) => (
             <Select
               {...field}
-              placeholder="Odaberite tip vozila"
+              placeholder={t('placeholders.vehicleType')}
               options={
                 carTypesResponse?.data.data.map((carType) => {
                   return { label: carType.name, value: carType.id };
@@ -132,7 +131,7 @@ export default function FirstStep({ setStep }) {
       </Form.Item>
 
       <Form.Item
-        label="Broj sjedišta"
+        label={t('formLabels.seatsNo')}
         help={errors['no_of_seats'] && errors['no_of_seats'].message}
         validateStatus={errors['no_of_seats'] && 'error'}
         hasFeedback
@@ -143,29 +142,29 @@ export default function FirstStep({ setStep }) {
           rules={{
             required: {
               value: true,
-              message: 'Broj sjedišta je obavezan',
+              message: t('errorMessages.requiredField'),
             },
             min: {
               value: 1,
-              message: 'Vozilo ne može imati manje od jednog sjedišta',
+              message: t('errorMessages.minNoOfSeats'),
             },
             max: {
               value: 55,
-              message: 'Vozilo ne može imati više od 55 sjedišta',
+              message: t('errorMessages.maxNoOfSeats'),
             },
           }}
           render={({ field }) => (
             <Input
               {...field}
               type="number"
-              placeholder="Unesite broj sjedišta"
+              placeholder={t('placeholders.seatsNo')}
             />
           )}
         />
       </Form.Item>
 
       <Form.Item
-        label="Cijena po danu"
+        label={t('formLabels.pricePerDay')}
         help={errors['price_per_day'] && errors['price_per_day'].message}
         validateStatus={errors['price_per_day'] && 'error'}
         hasFeedback
@@ -176,29 +175,29 @@ export default function FirstStep({ setStep }) {
           rules={{
             required: {
               value: true,
-              message: 'Cijena je obavezno polje',
+              message: t('errorMessages.requiredField'),
             },
             min: {
               value: 30,
-              message: 'Minimalna cijena vozila po danu je 30EUR',
+              message: t('errorMessages.minPricePerDay', { price: 30 }),
             },
             max: {
               value: 150,
-              message: 'Maksimalna cijena vozila po danu je 150EUR',
+              message: t('errorMessages.maxPricePerDay', { price: 150 }),
             },
           }}
           render={({ field }) => (
             <Input
               {...field}
               type="number"
-              placeholder="Unesite cijenu po danu"
+              placeholder={t('placeholders.pricePerDay')}
             />
           )}
         />
       </Form.Item>
 
       <Form.Item
-        label="Dodatne napomene"
+        label={t('formLabels.remarks')}
         help={errors['remarks'] && errors['remarks'].message}
         validateStatus={errors['remarks'] && 'error'}
         hasFeedback
@@ -213,7 +212,7 @@ export default function FirstStep({ setStep }) {
             <TextArea
               {...field}
               rows={4}
-              placeholder="Unesite dodatne primjedbe"
+              placeholder={t('placeholders.remarks')}
             />
           )}
         />
@@ -221,7 +220,7 @@ export default function FirstStep({ setStep }) {
 
       <div className="form-actions">
         <Button type="primary" htmlType="submit">
-          Sledeći korak
+          {t('buttons.nextStep')}
         </Button>
       </div>
     </Form>

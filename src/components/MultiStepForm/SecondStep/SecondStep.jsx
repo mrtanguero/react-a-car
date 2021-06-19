@@ -3,6 +3,7 @@ import { InboxOutlined } from '@ant-design/icons';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useContext } from 'react';
 import formDataContext from '../../../context/formDataContext';
+import { useTranslation } from 'react-i18next';
 
 const { Dragger } = Upload;
 
@@ -14,6 +15,7 @@ const dummyRequest = ({ file, onSuccess }) => {
 
 export default function SecondStep({ setStep, vehicleId }) {
   const { data, setValues } = useContext(formDataContext);
+  const { t } = useTranslation();
   const {
     control,
     handleSubmit,
@@ -36,8 +38,7 @@ export default function SecondStep({ setStep, vehicleId }) {
     if (secondStepData.photos.fileList.length === 0) {
       setError('photos', {
         type: 'required',
-        message:
-          'Morate odabrati makar jednu fotografiju da biste nastavili dalje',
+        message: t('errorMessages.photoRequired'),
       });
       return;
     }
@@ -57,8 +58,7 @@ export default function SecondStep({ setStep, vehicleId }) {
           rules={{
             required: {
               value: true,
-              message:
-                'Morate odabrati makar jednu fotografiju da biste nastavili dalje',
+              message: t('errorMessages.photoRequired'),
             },
           }}
           render={({ field: { value, onChange } }) => (
@@ -77,12 +77,9 @@ export default function SecondStep({ setStep, vehicleId }) {
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
                   </p>
-                  <p className="ant-upload-text">
-                    Kliknite ili prevucite fotografije u ovo polje
-                  </p>
+                  <p className="ant-upload-text">{t('content.uploadPhotos')}</p>
                   <p className="ant-upload-hint">
-                    Podržano je aploadovanje jedne ili više fotografija
-                    istovremeno.
+                    {t('content.uploadPhotosSecondary')}
                   </p>
                 </>
               }
@@ -93,10 +90,10 @@ export default function SecondStep({ setStep, vehicleId }) {
 
       <div className="form-actions">
         <Button style={{ margin: '0 8px' }} onClick={() => setStep(0)}>
-          Korak nazad
+          {t('buttons.back')}
         </Button>
         <Button type="primary" htmlType="submit">
-          Sledeći korak
+          {t('buttons.nextStep')}
         </Button>
       </div>
     </Form>

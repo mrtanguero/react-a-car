@@ -5,12 +5,14 @@ import authContext from '../../context/authContext';
 import { getReservations } from '../../services/reservations';
 import { CaretRightOutlined } from '@ant-design/icons';
 import ReservationCard from '../../components/ReservationCard/ReservationCard';
+import { useTranslation } from 'react-i18next';
 
 const { Panel } = Collapse;
 
 export default function HomePage() {
   const auth = useContext(authContext);
   const [reservations, setReservations] = useState([]);
+  const { t } = useTranslation();
 
   useQuery('getUserReservations', getReservations, {
     onSuccess: ({ data: { data } }) => {
@@ -29,14 +31,14 @@ export default function HomePage() {
         >
           <Card>
             <Typography.Title level={3} style={{ marginTop: 8 }}>
-              Dobrodošli u aplikaciju, {auth?.user?.name}!
+              {t('content.welcomeMessage', { name: auth?.user?.name })}
             </Typography.Title>
           </Card>
         </div>
       )}
       {auth?.user?.roleId === 2 && (
         <>
-          <PageHeader title="Vaše rezervacije" />
+          <PageHeader title={t('pageHeaders.yourReservations')} />
           <Collapse
             accordion
             defaultActiveKey={['1']}
@@ -44,7 +46,7 @@ export default function HomePage() {
               <CaretRightOutlined rotate={isActive ? 90 : 0} />
             )}
           >
-            <Panel header="Buduće rezervacije" key="1">
+            <Panel header={t('pageHeaders.upcomingReservations')} key="1">
               <Row gutter={[16, 16]}>
                 {reservations
                   .filter(
@@ -66,7 +68,7 @@ export default function HomePage() {
                   })}
               </Row>
             </Panel>
-            <Panel header="Rezervacije u toku" key="2">
+            <Panel header={t('pageHeaders.currentReservations')} key="2">
               <Row gutter={[16, 16]}>
                 {reservations
                   .filter(
@@ -85,7 +87,7 @@ export default function HomePage() {
                   })}
               </Row>
             </Panel>
-            <Panel header="Prošle rezervacije" key="3">
+            <Panel header={t('pageHeaders.passedReservations')} key="3">
               <Row gutter={[16, 16]}>
                 {reservations
                   .filter(

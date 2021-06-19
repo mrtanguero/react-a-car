@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const modalContext = React.createContext({
   modalProps: {
-    title: "Initial title",
+    title: '',
     children: null,
     visible: false,
     onOk: () => {},

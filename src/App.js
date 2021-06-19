@@ -42,9 +42,9 @@ const App = () => {
         <Route path="/login">
           <LoginForm />
         </Route>
-        <Route path="/unauthorized">
+        <ProtectedRoute auth={auth} path="/unauthorized">
           <Page403 />
-        </Route>
+        </ProtectedRoute>
         <ProtectedRoute auth={auth} path="/404">
           <Page404 />
         </ProtectedRoute>

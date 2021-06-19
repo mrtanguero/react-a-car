@@ -38,7 +38,7 @@ export default function ClientsPage() {
   const mutation = useMutation((id) => deleteClient(id), {
     onSuccess: () => {
       queryClient.invalidateQueries('clients');
-      message.success('Deleted!');
+      message.success(t('successMessages.deleted'));
     },
     onError: () => {
       message.error(error.response.data.message);
@@ -84,7 +84,7 @@ export default function ClientsPage() {
   const handleShowClient = (id) => {
     modalCtx.setModalProps({
       visible: true,
-      title: `Showing data for client ${id}`,
+      title: t('modals.showClient', { id }),
       children: (
         <ClientForm
           clientId={id}
@@ -101,7 +101,7 @@ export default function ClientsPage() {
   const handleEditClientClick = (id) => {
     modalCtx.setModalProps({
       visible: true,
-      title: `Edit client ${id}`,
+      title: t('modals.editClient', { id }),
       children: (
         <ClientForm
           clientId={id}
@@ -129,9 +129,8 @@ export default function ClientsPage() {
         extra={
           <>
             <Search
-              placeholder="Pretraži"
+              placeholder={t('placeholders.search')}
               onSearch={onSearch}
-              // style={{ width: 200 }}
               loading={isFetching}
             />
             <Button onClick={handleNewClientClick}>
@@ -146,38 +145,38 @@ export default function ClientsPage() {
           loading={!response?.pages.length && isFetching}
           columns={[
             {
-              title: 'Name',
+              title: t('tableHeaders.clientName'),
               dataIndex: 'name',
               key: 'name',
               width: 180,
             },
             {
-              title: 'ID document number',
+              title: t('tableHeaders.idDocNum'),
               dataIndex: 'identification_document_no',
               key: 'document-id',
               width: 150,
               ellipsis: true,
             },
             {
-              title: 'Phone',
+              title: t('tableHeaders.phone'),
               dataIndex: 'phone_no',
               key: 'phone',
               width: 150,
             },
             {
-              title: 'Email',
+              title: t('tableHeaders.email'),
               dataIndex: 'email',
               key: 'email',
               width: 200,
             },
             {
-              title: 'Country',
+              title: t('tableHeaders.country'),
               dataIndex: ['country', 'name'],
               key: 'country',
               width: 150,
             },
             {
-              title: 'Actions',
+              title: t('tableHeaders.actions'),
               key: 'action',
               align: 'center',
               width: 100,
@@ -207,9 +206,9 @@ export default function ClientsPage() {
                         return;
                       }
                       confirm({
-                        title: 'Do you want to delete this client?',
+                        title: t('modals.confirmClientDelete'),
                         icon: <ExclamationCircleOutlined />,
-                        content: `This action will also delete all reservations tied to ${record.name}!`,
+                        content: t('modals.actionPermanent'),
                         okType: 'danger',
                         onOk() {
                           return mutation.mutateAsync(

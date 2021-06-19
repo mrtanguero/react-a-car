@@ -28,6 +28,7 @@ import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getClients } from '../../services/clients';
 import MyAsyncSelect from '../MyAsyncSelect/MyAsyncSelect';
+import { useTranslation } from 'react-i18next';
 
 export default function ReservationForm({
   reservationId,
@@ -39,6 +40,7 @@ export default function ReservationForm({
 }) {
   const [availableEquipment, setAvailableEquipment] = useState([]);
   const [equipmentData, setEquipmentData] = useState([]);
+  const { t, i18n } = useTranslation();
   const history = useHistory();
 
   const queryClient = useQueryClient();
@@ -120,7 +122,7 @@ export default function ReservationForm({
       queryClient.invalidateQueries('reservations');
       closeModal();
       reset();
-      message.success('Sačuvano!');
+      message.success(t('successMessages.created'));
     },
     onError: (error) => {
       console.log(error.response.data.message);
@@ -135,7 +137,7 @@ export default function ReservationForm({
         queryClient.invalidateQueries('reservations');
         closeModal();
         reset();
-        message.success('Updated!');
+        message.success(t('successMessages.updated'));
       },
       onError: (error) => {
         console.log(error.response.data.message);
@@ -197,26 +199,26 @@ export default function ReservationForm({
         {reservationId && !hideClient && (
           <div className="client-info">
             <Descriptions
-              title="Klijent"
+              title={t('formLabels.client')}
               bordered
               size="small"
               column={1}
               labelStyle={{ width: '20ch' }}
               contentStyle={{ color: 'grey' }}
             >
-              <Descriptions.Item label="Ime">
+              <Descriptions.Item label={t('formLabels.name')}>
                 {reservationResponse?.data.client.name}
               </Descriptions.Item>
-              <Descriptions.Item label="Email">
+              <Descriptions.Item label={t('formLabels.email')}>
                 {reservationResponse?.data.client.email}
               </Descriptions.Item>
-              <Descriptions.Item label="Telefon">
+              <Descriptions.Item label={t('formLabels.phoneShort')}>
                 {reservationResponse?.data.client.phone_no}
               </Descriptions.Item>
-              <Descriptions.Item label="Broj lične/pasoša">
+              <Descriptions.Item label={t('formLabels.IdDocShort')}>
                 {reservationResponse?.data.client.identification_document_no}
               </Descriptions.Item>
-              <Descriptions.Item label="Država">
+              <Descriptions.Item label={t('formLabels.country')}>
                 {reservationResponse?.data.client.country.name}
               </Descriptions.Item>
             </Descriptions>
@@ -224,30 +226,30 @@ export default function ReservationForm({
         )}
         <div className="vehicle-info">
           <Descriptions
-            title="Vehicle"
+            title={t('formLabels.vehicle')}
             size="small"
             bordered
             column={1}
             labelStyle={{ width: '20ch' }}
             contentStyle={{ color: 'grey' }}
           >
-            <Descriptions.Item label="Broj registracije">
+            <Descriptions.Item label={t('formLabels.plateNo')}>
               {vehicleData?.plate_no ||
                 reservationResponse?.data.vehicle.plate_no}
             </Descriptions.Item>
-            <Descriptions.Item label="Godina proizvodnje">
+            <Descriptions.Item label={t('formLabels.year')}>
               {vehicleData?.production_year ||
                 reservationResponse?.data.vehicle.production_year}
             </Descriptions.Item>
-            <Descriptions.Item label="Tip vozila">
+            <Descriptions.Item label={t('formLabels.carType')}>
               {vehicleData?.car_type.name ||
                 reservationResponse?.data.vehicle.car_type.name}
             </Descriptions.Item>
-            <Descriptions.Item label="Broj sjedišta">
+            <Descriptions.Item label={t('formLabels.seatsNo')}>
               {vehicleData?.no_of_seats ||
                 reservationResponse?.data.vehicle.no_of_seats}
             </Descriptions.Item>
-            <Descriptions.Item label="Cijena po danu">
+            <Descriptions.Item label={t('formLabels.pricePerDay')}>
               {vehicleData?.price_per_day ||
                 reservationResponse?.data.vehicle.price_per_day}
               €
@@ -259,24 +261,24 @@ export default function ReservationForm({
           <>
             <div className="dates-info">
               <Descriptions
-                title="Datumi"
+                title={t('formLabels.dates')}
                 size="small"
                 column={1}
                 bordered
                 labelStyle={{ width: '20ch' }}
                 contentStyle={{ color: 'grey' }}
               >
-                <Descriptions.Item label="Od">
+                <Descriptions.Item label={t('formLabels.from')}>
                   {reservationResponse?.data.from_date}
                 </Descriptions.Item>
-                <Descriptions.Item label="Do">
+                <Descriptions.Item label={t('formLabels.to')}>
                   {reservationResponse?.data.to_date}
                 </Descriptions.Item>
               </Descriptions>
             </div>
             <div className="locations-info">
               <Descriptions
-                title="Lokacije"
+                title={t('formLabels.locations')}
                 size="small"
                 bordered
                 column={1}
@@ -286,17 +288,17 @@ export default function ReservationForm({
                   paddingRight: 16,
                 }}
               >
-                <Descriptions.Item label="Preuzimanje">
+                <Descriptions.Item label={t('formLabels.pickup')}>
                   {reservationResponse?.data.rent_location.name}
                 </Descriptions.Item>
-                <Descriptions.Item label="Vraćanje">
+                <Descriptions.Item label={t('formLabels.return')}>
                   {reservationResponse?.data.return_location.name}
                 </Descriptions.Item>
               </Descriptions>
             </div>
             {reservationResponse?.data.equipment.length > 0 && (
               <Descriptions
-                title="Dodatna oprema"
+                title={t('formLabels.equipment')}
                 size="small"
                 bordered
                 column={1}
@@ -320,6 +322,26 @@ export default function ReservationForm({
                 })}
               </Descriptions>
             )}
+            <Descriptions
+              column={1}
+              bordered
+              size="small"
+              labelStyle={{
+                width: '50%',
+                textTransform: 'uppercase',
+                textAlign: 'center',
+              }}
+              contentStyle={{
+                textAlign: 'center',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                color: 'grey',
+              }}
+            >
+              <Descriptions.Item label={t('formLabels.totalPrice')}>
+                {reservationResponse?.data?.total_price}€
+              </Descriptions.Item>
+            </Descriptions>
           </>
         )}
       </Space>
@@ -329,39 +351,34 @@ export default function ReservationForm({
           <Divider />
           <Form onSubmitCapture={handleSubmit(onSubmit)} layout="vertical">
             {!reservationId && (
-              <Form.Item label="Klijent">
+              <Form.Item label={t('formLabels.client')}>
                 <Controller
                   name="client"
                   control={control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: t('errorMessages.requiredField'),
+                    },
+                  }}
                   render={({ field }) => {
                     return (
                       <MyAsyncSelect
                         {...field}
-                        placeholder="Odaberite klijenta"
+                        placeholder={t('placeholders.client')}
                         queryFn={getClients}
                         labelName="name"
                         valueName="id"
                       />
-                      // <DebounceSelect
-                      //   {...field}
-                      //   placeholder="Odaberite klijenta"
-                      //   fetchOptions={getClients}
-                      //   style={{
-                      //     width: '100%',
-                      //   }}
-                      // />
                     );
                   }}
                 />
               </Form.Item>
             )}
-            <div
-              className="reservation-form-container reservation-dates"
-              // style={{ display: 'flex', gap: 24 }}
-            >
+            <div className="reservation-form-container reservation-dates">
               <Form.Item
                 style={{ flex: 1, width: '100%' }}
-                label="Od"
+                label={t('formLabels.from')}
                 help={errors['from_date'] && errors['from_date'].message}
                 validateStatus={errors['from_date'] && 'error'}
                 hasFeedback
@@ -372,22 +389,24 @@ export default function ReservationForm({
                   rules={{
                     required: {
                       value: true,
-                      message: 'Obavezno polje.',
+                      message: t('errorMessages.requiredField'),
                     },
                   }}
                   render={({ field }) => (
                     <DatePicker
                       style={{ width: '100%' }}
                       {...field}
-                      placeholder="Datum od"
-                      format="DD.MM.YYYY."
+                      placeholder={t('placeholders.from')}
+                      format={
+                        i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'
+                      }
                     />
                   )}
                 />
               </Form.Item>
               <Form.Item
                 style={{ flex: 1 }}
-                label="Do"
+                label={t('formLabels.to')}
                 help={errors['to_date'] && errors['to_date'].message}
                 validateStatus={errors['to_date'] && 'error'}
                 hasFeedback
@@ -398,26 +417,25 @@ export default function ReservationForm({
                   rules={{
                     required: {
                       value: true,
-                      message: 'Obavezno polje.',
+                      message: t('errorMessages.requiredField'),
                     },
                   }}
                   render={({ field }) => (
                     <DatePicker
                       style={{ width: '100%' }}
                       {...field}
-                      placeholder="Datum do"
-                      format="DD.MM.YYYY."
+                      placeholder={t('placeholders.to')}
+                      format={
+                        i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'
+                      }
                     />
                   )}
                 />
               </Form.Item>
             </div>
-            <div
-              className="reservation-form-container location-dates"
-              // style={{ display: 'flex', gap: 24 }}
-            >
+            <div className="reservation-form-container location-dates">
               <Form.Item
-                label="Lokacija preuzimanja"
+                label={t('formLabels.pickupLocation')}
                 help={
                   errors['rent_location_id'] &&
                   errors['rent_location_id'].message
@@ -432,7 +450,7 @@ export default function ReservationForm({
                   rules={{
                     required: {
                       value: true,
-                      message: 'Obavezno polje',
+                      message: t('errorMessages.requiredField'),
                     },
                   }}
                   render={({ field }) => (
@@ -445,7 +463,7 @@ export default function ReservationForm({
                           .toLowerCase()
                           .indexOf(input.toLowerCase()) >= 0
                       }
-                      placeholder="Odaberite lokaciju preuzimanja"
+                      placeholder={t('placeholders.rentLocation')}
                       options={
                         locationsResponse?.data.map((carType) => {
                           return { label: carType.name, value: carType.id };
@@ -456,7 +474,7 @@ export default function ReservationForm({
                 />
               </Form.Item>
               <Form.Item
-                label="Lokacija vraćanja"
+                label={t('formLabels.returnLocation')}
                 help={
                   errors['return_location_id'] &&
                   errors['return_location_id'].message
@@ -471,7 +489,7 @@ export default function ReservationForm({
                   rules={{
                     required: {
                       value: true,
-                      message: 'Klijent je obavezan za rezervaciju',
+                      message: t('errorMessages.requiredField'),
                     },
                   }}
                   render={({ field }) => (
@@ -484,7 +502,7 @@ export default function ReservationForm({
                           .toLowerCase()
                           .indexOf(input.toLowerCase()) >= 0
                       }
-                      placeholder="Odaberite lokaciju vraćanja"
+                      placeholder={t('placeholders.returnLocation')}
                       options={
                         locationsResponse?.data.map((carType) => {
                           return { label: carType.name, value: carType.id };
@@ -495,41 +513,59 @@ export default function ReservationForm({
                 />
               </Form.Item>
             </div>
-            <Form.Item label="Dodatna oprema" hasFeedback>
+            <Form.Item label={t('formLabels.equipment')} hasFeedback>
               <TreeSelect
                 name="equipment"
                 treeData={renderEquipmentTreeOptions(availableEquipment)}
                 onChange={handleTreeSelectChange}
                 value={equipmentData}
-                placeholder="Unesite dodatnu opremu"
+                placeholder={t('placeholders.equipment')}
                 multiple
               />
             </Form.Item>
-            <div>
-              UKUPNA CIJENA:{' '}
-              {watchDates[0] && watchDates[1]
-                ? (Math.ceil(
-                    Math.abs(
-                      (new Date(watchDates[1].format('YYYY-MM-DD')) -
-                        new Date(watchDates[0].format('YYYY-MM-DD'))) /
-                        (1000 * 60 * 60 * 24)
-                    )
-                  ) +
-                    1) *
-                  +(
-                    vehicleData?.price_per_day ||
-                    reservationResponse?.data.vehicle.price_per_day
-                  )
-                : null}
-              €
-            </div>
+            {!disabled && (
+              <Descriptions
+                column={1}
+                bordered
+                size="small"
+                labelStyle={{
+                  width: '50%',
+                  textTransform: 'uppercase',
+                  textAlign: 'center',
+                }}
+                contentStyle={{
+                  textAlign: 'center',
+                  fontSize: '1.5rem',
+                  fontWeight: 'bold',
+                  color: 'grey',
+                }}
+              >
+                <Descriptions.Item label={t('formLabels.totalPrice')}>
+                  {watchDates[0] && watchDates[1]
+                    ? (Math.ceil(
+                        Math.abs(
+                          (new Date(watchDates[1].format('YYYY-MM-DD')) -
+                            new Date(watchDates[0].format('YYYY-MM-DD'))) /
+                            (1000 * 60 * 60 * 24)
+                        )
+                      ) +
+                        1) *
+                      +(
+                        vehicleData?.price_per_day ||
+                        reservationResponse?.data.vehicle.price_per_day
+                      )
+                    : null}
+                  €
+                </Descriptions.Item>
+              </Descriptions>
+            )}
             <div className="form-actions">
               <Button
                 htmlType="submit"
                 type="primary"
                 loading={updateMutation.isLoading || createMutation.isLoading}
               >
-                Sačuvaj
+                {t('buttons.save')}
               </Button>
             </div>
           </Form>

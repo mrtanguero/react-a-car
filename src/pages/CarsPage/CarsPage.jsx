@@ -39,7 +39,7 @@ export default function CarsPage() {
   const mutation = useMutation((id) => deleteVehicle(id), {
     onSuccess: () => {
       queryClient.invalidateQueries('vehicles');
-      message.success('Deleted!');
+      message.success(t('successMessages.deleted'));
     },
     onError: (error) => {
       message.error(error.response.data.message);
@@ -85,7 +85,7 @@ export default function CarsPage() {
   const handleShowVehicle = (id) => {
     modalCtx.setModalProps({
       visible: true,
-      title: `Showing data for vehicle ${id}`,
+      title: t('modals.showVehicle', { id }),
       children: (
         <MultiStepForm
           vehicleId={id}
@@ -102,7 +102,7 @@ export default function CarsPage() {
   const handleEditVehicleClick = (id) => {
     modalCtx.setModalProps({
       visible: true,
-      title: `Edit vehicle ${id}`,
+      title: t('modals.editVehicle', { id }),
       children: (
         <MultiStepForm
           vehicleId={id}
@@ -130,9 +130,8 @@ export default function CarsPage() {
         extra={
           <>
             <Search
-              placeholder="Pretraži"
+              placeholder={t('placeholders.search')}
               onSearch={onSearch}
-              // style={{ width: 200 }}
               loading={isFetching}
             />
             <Button onClick={handleNewVehicleClick}>
@@ -147,43 +146,43 @@ export default function CarsPage() {
           loading={!response?.pages.length && isFetching}
           columns={[
             {
-              title: 'Licence plate',
+              title: t('tableHeaders.plateNo'),
               dataIndex: 'plate_no',
               key: 'plates',
               width: 105,
             },
             {
-              title: 'Year',
+              title: t('tableHeaders.year'),
               dataIndex: 'production_year',
               key: 'year',
               width: 80,
             },
             {
-              title: 'Type',
+              title: t('tableHeaders.carType'),
               dataIndex: ['car_type', 'name'],
               key: 'type',
               width: 120,
             },
             {
-              title: 'Seats',
+              title: t('tableHeaders.seatsNum'),
               dataIndex: 'no_of_seats',
               key: 'seats',
               width: 80,
             },
             {
-              title: 'Price per day',
+              title: t('tableHeaders.pricePerDay'),
               dataIndex: 'price_per_day',
               key: 'price',
               width: 120,
             },
             {
-              title: 'Notes',
+              title: t('tableHeaders.remarks'),
               dataIndex: 'remarks',
               key: 'remarks',
               width: 200,
             },
             {
-              title: 'Actions',
+              title: t('tableHeaders.actions'),
               key: 'action',
               align: 'center',
               width: 100,
@@ -200,16 +199,10 @@ export default function CarsPage() {
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (!record?.id) {
-                        message.error(
-                          'Ovaj klijent je seedovan i nema odgovarajućeg usera'
-                        );
-                        return;
-                      }
                       confirm({
-                        title: 'Do you want to delete this vehicle?',
+                        title: t('modals.confirmVehicleDelete'),
                         icon: <ExclamationCircleOutlined />,
-                        content: `This action is not revertable!`,
+                        content: t('modals.actionPermanent'),
                         okType: 'danger',
                         onOk() {
                           return mutation.mutateAsync(record.id);
