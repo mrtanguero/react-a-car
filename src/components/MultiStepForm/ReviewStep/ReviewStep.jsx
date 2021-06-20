@@ -5,11 +5,7 @@ import { Button, Descriptions, Divider, Image, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import formDataContext from '../../../context/formDataContext';
-import {
-  createVehicle,
-  deletePhoto,
-  updateVehicle,
-} from '../../../services/cars';
+import { createVehicle, updateVehicle } from '../../../services/cars';
 
 export default function ReviewStep({
   setStep,
@@ -21,9 +17,6 @@ export default function ReviewStep({
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const deletePhotoMutation = useMutation('deletePhoto', deletePhoto, {
-    onSuccess: () => console.log('Deleted photo'),
-  });
   const createCarMutation = useMutation('createVehicle', createVehicle, {
     onSuccess: () => {
       queryClient.invalidateQueries('vehicles');
@@ -41,7 +34,6 @@ export default function ReviewStep({
     {
       onSuccess: () => {
         queryClient.invalidateQueries('vehicles');
-        data?.photoDeleteList.forEach((id) => deletePhotoMutation.mutate(id));
         queryClient.invalidateQueries('getVehicle');
         setStep(0);
         setData({});

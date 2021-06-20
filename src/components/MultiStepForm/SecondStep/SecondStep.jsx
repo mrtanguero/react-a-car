@@ -27,16 +27,11 @@ export default function SecondStep({ setStep }) {
     defaultValues: { photos: data.photos },
   });
 
-  const onRemove = (photo) => {
-    if (!photo.originFileObj) {
-      setValues({
-        photoDeleteList: data?.photoDeleteList.concat(photo.uid),
-      });
-    }
-  };
-
   const onSubmit = (secondStepData) => {
-    if (secondStepData.photos.fileList.length === 0) {
+    if (
+      secondStepData.photos.fileList.filter((file) => file.originFileObj)
+        .length === 0
+    ) {
       setError('photos', {
         type: 'required',
         message: t('errorMessages.photoRequired'),
@@ -69,9 +64,12 @@ export default function SecondStep({ setStep }) {
               maxCount={5}
               accept="image/*"
               listType="picture"
-              fileList={value?.fileList?.length ? value.fileList : undefined}
+              fileList={
+                value?.fileList?.length
+                  ? value.fileList.filter((file) => file.originFileObj)
+                  : undefined
+              }
               onPreview={() => {}}
-              onRemove={onRemove}
               customRequest={dummyRequest}
               children={
                 <>

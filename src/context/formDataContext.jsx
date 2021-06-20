@@ -29,7 +29,6 @@ export const FormDataProvider = ({ children, vehicleId }) => {
       onSuccess: ({ data }) => {
         setData({
           ...data,
-          photoDeleteList: [],
           photos: {
             fileList: data?.photos?.map((photo) => {
               return {

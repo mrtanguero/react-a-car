@@ -149,7 +149,7 @@
     "maxNoOfSeats": "Vehicle can have maximum of 55 seats",
     "minPricePerDay": "Minimum allowed price of vehicle is {{ price }}EUR",
     "maxPricePerDay": "Maximum allowed price of vehicle is {{ price }}EUR",
-    "photoRequired": "You have to select at least one photo for the vehicle",
+    "photoRequired": "You have to select at least one photo for the vehicle (all the old ones will automatically deleted)",
     "clientHasReservations": "You can't delete a client with reservations",
     "vehicleHasReservations": "You can't delete a vehicle with reservations",
     "datesInvalid": "Date of reservation's beginning cannot be after the date of reservation's end"
