@@ -1,12 +1,11 @@
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Form, Input, Button, Select, message, Spin } from 'antd';
-import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useTranslation } from 'react-i18next';
 import { getCountries } from '../../services/countries';
 import { createClient, getClient, updateClient } from '../../services/clients';
-import { useTranslation } from 'react-i18next';
 
 const emailRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -21,7 +20,11 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
     () => getClient(clientId),
     {
       enabled: clientQueryEnabled,
-      onError: (error) => console.log(error.response),
+      onSuccess: () => setClientQueryEnabled(false),
+      onError: (error) => {
+        setClientQueryEnabled(false);
+        console.log(error.response.data.message);
+      },
     }
   );
 
@@ -283,3 +286,9 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
     </Spin>
   );
 }
+
+ClientForm.propTypes = {
+  clientId: PropTypes.number,
+  disabled: PropTypes.bool,
+  onCancel: PropTypes.func,
+};

@@ -1,7 +1,6 @@
 import { Spin } from 'antd';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-// import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { getVehicle } from '../services/cars';
 

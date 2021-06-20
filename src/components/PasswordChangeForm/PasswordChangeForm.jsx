@@ -1,8 +1,9 @@
-import { Form, Input, message, Button } from 'antd';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { Form, Input, message, Button } from 'antd';
 import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
+import { useTranslation } from 'react-i18next';
 import { changePassword } from '../../services/account';
 
 export default function PasswordChangeForm({ closeModal }) {
@@ -130,3 +131,7 @@ export default function PasswordChangeForm({ closeModal }) {
     </Form>
   );
 }
+
+PasswordChangeForm.propTypes = {
+  closeModal: PropTypes.func,
+};

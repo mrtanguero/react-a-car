@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Steps } from 'antd';
 import FirstStep from './FirstStep/FirstStep';
 import SecondStep from './SecondStep/SecondStep';
@@ -37,9 +38,7 @@ export default function MultiStepForm({ vehicleId, disabled, closeModal }) {
           </Steps>
           <div className="steps-content" style={{ paddingTop: 20 }}>
             {current === 0 && <FirstStep setStep={setCurrent} />}
-            {current === 1 && (
-              <SecondStep setStep={setCurrent} vehicleId={vehicleId} />
-            )}
+            {current === 1 && <SecondStep setStep={setCurrent} />}
             {current === 2 && (
               <ReviewStep
                 setStep={setCurrent}
@@ -55,3 +54,9 @@ export default function MultiStepForm({ vehicleId, disabled, closeModal }) {
     </FormDataProvider>
   );
 }
+
+MultiStepForm.propTypes = {
+  vehicleId: PropTypes.number,
+  disabled: PropTypes.bool,
+  closeModal: PropTypes.func,
+};

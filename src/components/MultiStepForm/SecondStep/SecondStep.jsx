@@ -1,19 +1,20 @@
-import { Button, Form, Upload } from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
-import { Controller, useForm } from 'react-hook-form';
 import React, { useContext } from 'react';
-import formDataContext from '../../../context/formDataContext';
+import PropTypes from 'prop-types';
+import { Button, Form, Upload } from 'antd';
+import { Controller, useForm } from 'react-hook-form';
+import { InboxOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import formDataContext from '../../../context/formDataContext';
 
 const { Dragger } = Upload;
 
-const dummyRequest = ({ file, onSuccess }) => {
+const dummyRequest = ({ _, onSuccess }) => {
   setTimeout(() => {
     onSuccess('ok');
   }, 0);
 };
 
-export default function SecondStep({ setStep, vehicleId }) {
+export default function SecondStep({ setStep }) {
   const { data, setValues } = useContext(formDataContext);
   const { t } = useTranslation();
   const {
@@ -99,3 +100,7 @@ export default function SecondStep({ setStep, vehicleId }) {
     </Form>
   );
 }
+
+SecondStep.propTypes = {
+  setStep: PropTypes.func,
+};

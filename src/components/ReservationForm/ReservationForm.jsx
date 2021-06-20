@@ -1,4 +1,6 @@
+import React, { useState } from 'react';
 import './ReservationForm.css';
+import PropTypes from 'prop-types';
 import {
   Button,
   DatePicker,
@@ -11,7 +13,6 @@ import {
   Spin,
   TreeSelect,
 } from 'antd';
-import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { renderEquipmentTreeOptions } from '../../helper/functions';
@@ -584,3 +585,12 @@ export default function ReservationForm({
     </Spin>
   );
 }
+
+ReservationForm.propTypes = {
+  reservationId: PropTypes.number,
+  vehicleData: PropTypes.object,
+  selectedDates: PropTypes.array,
+  closeModal: PropTypes.func,
+  disabled: PropTypes.bool,
+  hideClient: PropTypes.bool,
+};

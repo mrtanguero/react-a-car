@@ -1,6 +1,6 @@
+import React, { useContext } from 'react';
 import { Card, Descriptions } from 'antd';
-import React from 'react';
-import { useContext } from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import modalContext from '../../context/modalContext';
 import ReservationForm from '../ReservationForm/ReservationForm';
@@ -55,3 +55,7 @@ export default function ReservationCard({ reservation }) {
     </Card>
   );
 }
+
+ReservationCard.propTypes = {
+  reservation: PropTypes.object,
+};

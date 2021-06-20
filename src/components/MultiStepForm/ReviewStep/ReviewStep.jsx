@@ -1,14 +1,15 @@
-import { Button, Descriptions, Divider, Image, message } from 'antd';
-import './ReviewStep.css';
 import React, { useContext } from 'react';
-import formDataContext from '../../../context/formDataContext';
+import './ReviewStep.css';
+import PropTypes from 'prop-types';
+import { Button, Descriptions, Divider, Image, message } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
+import formDataContext from '../../../context/formDataContext';
 import {
   createVehicle,
   deletePhoto,
   updateVehicle,
 } from '../../../services/cars';
-import { useTranslation } from 'react-i18next';
 
 export default function ReviewStep({
   setStep,
@@ -136,3 +137,10 @@ export default function ReviewStep({
     </>
   );
 }
+
+ReviewStep.propTypes = {
+  setStep: PropTypes.func,
+  closeModal: PropTypes.func,
+  vehicleId: PropTypes.number,
+  disabled: PropTypes.bool,
+};

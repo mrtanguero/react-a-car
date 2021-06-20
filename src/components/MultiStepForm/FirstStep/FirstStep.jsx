@@ -1,10 +1,11 @@
-import { Button, Form, Input, Select } from 'antd';
-import { Controller, useForm } from 'react-hook-form';
 import React, { useContext, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { Button, Form, Input, Select } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
+import { Controller, useForm } from 'react-hook-form';
 import formDataContext from '../../../context/formDataContext';
 import { getCarTypes } from '../../../services/carTypes';
-import { useQuery } from 'react-query';
-import { useTranslation } from 'react-i18next';
 
 const { TextArea } = Input;
 
@@ -226,3 +227,7 @@ export default function FirstStep({ setStep }) {
     </Form>
   );
 }
+
+FirstStep.propTypes = {
+  setStep: PropTypes.func,
+};

@@ -17,7 +17,6 @@ const MyAsyncSelect = React.forwardRef(
           label: option[labelName],
         };
       });
-      console.log(options);
 
       let filteredOptions;
       if (!search) {
