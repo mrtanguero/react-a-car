@@ -42,7 +42,14 @@ export default function CarsPage() {
       message.success(t('successMessages.deleted'));
     },
     onError: (error) => {
-      message.error(error.response.data.message);
+      if (
+        error.response.data.message ===
+        "Can't delete vehicle witch has reservation attached to it!"
+      ) {
+        message.error(t('errorMessages.vehicleHasReservations'));
+      } else {
+        message.error(error.response.data.message);
+      }
     },
   });
 

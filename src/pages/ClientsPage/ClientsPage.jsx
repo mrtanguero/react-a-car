@@ -41,11 +41,10 @@ export default function ClientsPage() {
       message.success(t('successMessages.deleted'));
     },
     onError: (error) => {
-      console.log(error.response.data.message);
       if (error.response.data.message.split(':')[0] === 'SQLSTATE[23000]') {
-        message.error(
-          'Da biste obrisali ovog klijenta morate prvo obrisate njegove/njene rezervacije.'
-        );
+        message.error(t('errorMessages.clientHasReservations'));
+      } else {
+        message.error(error.response.data.message);
       }
     },
   });

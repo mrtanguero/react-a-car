@@ -17,6 +17,7 @@ import modalContext from '../../context/modalContext';
 import ClientForm from '../../components/ClientForm/ClientForm';
 import { logout } from '../../services/account';
 import MultiStepForm from '../../components/MultiStepForm/MultiStepForm';
+import PasswordChangeForm from '../../components/PasswordChangeForm/PasswordChangeForm';
 
 const { SubMenu } = Menu;
 
@@ -35,6 +36,15 @@ export default function MainDrawer({
   };
 
   const handleClick = (e) => {
+    if (
+      e.key === 'create:car' ||
+      e.key === 'create:client' ||
+      e.key === 'logout' ||
+      e.key === 'user:password-change'
+    ) {
+      handleCloseDrawer();
+      return;
+    }
     setCurrentDrawer(e.key);
     handleCloseDrawer();
   };
@@ -59,6 +69,17 @@ export default function MainDrawer({
       visible: true,
       title: t('modals.newClient'),
       children: <ClientForm onCancel={handleCancelModal} />,
+      onOk: () => {},
+      onCancel: handleCancelModal,
+      footer: null,
+    });
+  };
+
+  const handlePasswordChangeClick = () => {
+    modalCtx.setModalProps({
+      visible: true,
+      title: t('modals.changePassword'),
+      children: <PasswordChangeForm closeModal={handleCancelModal} />,
       onOk: () => {},
       onCancel: handleCancelModal,
       footer: null,
@@ -135,7 +156,11 @@ export default function MainDrawer({
           icon={<ProfileOutlined />}
           title={auth?.user?.name?.split(' ')[0]}
         >
-          <Menu.Item icon={<LockOutlined />} key="user:password-change">
+          <Menu.Item
+            icon={<LockOutlined />}
+            key="user:password-change"
+            onClick={handlePasswordChangeClick}
+          >
             {t('navigation.changePassword')}
           </Menu.Item>
           <Menu.Item

@@ -72,9 +72,9 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
         if (
           error.response.data.message === 'The email has already been taken.'
         ) {
-          setError('identification_document_no', {
+          setError('email', {
             type: 'manual',
-            message: t('takenEmail'),
+            message: t('errorMessages.takenEmail'),
           });
         }
       },

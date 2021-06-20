@@ -149,7 +149,10 @@
     "maxNoOfSeats": "Vozilo ne može imati više od 55 sjedišta",
     "minPricePerDay": "Minimalna cijena vozila po danu je {{ price }}EUR",
     "maxPricePerDay": "Maksimalna cijena vozila po danu je {{ price }}EUR",
-    "photoRequired": "Morate odabrati makar jednu fotografiju da biste nastavili dalje"
+    "photoRequired": "Morate odabrati makar jednu fotografiju da biste nastavili dalje",
+    "clientHasReservations": "Ne možete obrisati klijenta koji ima rezervacije",
+    "vehicleHasReservations": "Ne možete obrisati vozilo koje ima rezervacije",
+    "datesInvalid": "Datum završetka rezervacije ne smije biti prije datuma početka rezervacije"
   },
   "successMessages": {
     "created": "Kreiranje je uspješno završeno",

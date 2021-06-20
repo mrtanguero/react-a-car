@@ -26,7 +26,7 @@ export default function ReviewStep({
   const createCarMutation = useMutation('createVehicle', createVehicle, {
     onSuccess: () => {
       queryClient.invalidateQueries('vehicles');
-      message.success('Created!');
+      message.success(t('successMessages.created'));
       setData({});
       setStep(0);
       closeModal();
@@ -38,13 +38,14 @@ export default function ReviewStep({
     ['updateVehicle', vehicleId],
     (data) => updateVehicle(data, vehicleId),
     {
-      onSuccess: (response) => {
+      onSuccess: () => {
         queryClient.invalidateQueries('vehicles');
         data?.photoDeleteList.forEach((id) => deletePhotoMutation.mutate(id));
         queryClient.invalidateQueries('getVehicle');
         setStep(0);
+        setData({});
         closeModal();
-        message.success('Updated!');
+        message.success(t('successMessages.updated'));
       },
       onError: (error) => message.error(error.response.data.message),
     }

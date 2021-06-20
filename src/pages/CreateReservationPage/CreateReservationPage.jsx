@@ -68,11 +68,10 @@ export default function CreateReservationPage() {
           error.response.data.message ===
           'The end date must be a date after or equal to start date.'
         ) {
-          message.error(
-            'Datum završetka rezervacije ne smije biti prije datuma početka rezervacije'
-          );
+          message.error(t('errorMessages.datesInvalid'));
+        } else {
+          message.error(error.response.data.message);
         }
-        console.log(error.response.data.message);
       },
       refetchOnWindowFocus: false,
       retry: 0,
