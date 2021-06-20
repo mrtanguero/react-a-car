@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { useHistory } from 'react-router';
 import { getAccount } from '../services/account';
 
 const getJWTFromLocalStorage = () => {
   return localStorage.getItem('jwt');
+};
+
+const getUserFromLocalStorage = () => {
+  return JSON.parse(localStorage.getItem('user'));
 };
 
 const authContext = React.createContext({
@@ -15,35 +18,26 @@ const authContext = React.createContext({
 
 export const AuthProvider = (props) => {
   const [jwt, setJwt] = useState(getJWTFromLocalStorage());
-  const [user, setUser] = useState(null);
-  const history = useHistory();
+  const [user, setUser] = useState(getUserFromLocalStorage() || null);
 
-  const { data: response, isSuccess, error } = useQuery('account', getAccount, {
+  const { data: response, isSuccess } = useQuery('account', getAccount, {
     refetchOnWindowFocus: false,
     enabled: !!jwt,
     retry: false,
   });
 
-  if (error && jwt) {
-    localStorage.clear();
-    setJwt('');
-    setUser(null);
-    history.replace('/login');
-  }
-
-  if (!localStorage.getItem('jwt')) {
-    localStorage.clear();
-    history.replace('/login');
-  }
-
   useEffect(() => {
     if (jwt && isSuccess) {
-      setUser({
+      setUser(() => ({
         name: response.data.name,
         roleId: response.data.role_id,
-      });
+      }));
     }
-  }, [jwt, response?.data, isSuccess]);
+  }, [isSuccess, jwt, response]);
+
+  useEffect(() => {
+    localStorage.setItem('user', JSON.stringify(user));
+  }, [user]);
 
   return (
     <authContext.Provider value={{ user, jwt, setJwt, setUser }}>

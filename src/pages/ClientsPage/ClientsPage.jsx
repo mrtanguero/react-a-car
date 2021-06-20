@@ -40,8 +40,13 @@ export default function ClientsPage() {
       queryClient.invalidateQueries('clients');
       message.success(t('successMessages.deleted'));
     },
-    onError: () => {
-      message.error(error.response.data.message);
+    onError: (error) => {
+      console.log(error.response.data.message);
+      if (error.response.data.message.split(':')[0] === 'SQLSTATE[23000]') {
+        message.error(
+          'Da biste obrisali ovog klijenta morate prvo obrisate njegove/njene rezervacije.'
+        );
+      }
     },
   });
 

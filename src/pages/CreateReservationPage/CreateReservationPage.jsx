@@ -91,7 +91,6 @@ export default function CreateReservationPage() {
 
   const handleSearch = () => {
     if (reservationDates[0] && reservationDates[1] && carType) {
-      console.log(reservationDates);
       setQueryEnabled(true);
     }
   };

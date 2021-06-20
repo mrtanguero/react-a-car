@@ -10,7 +10,6 @@ const MyAsyncSelect = React.forwardRef(
         pageParam,
         queryKey: [null, { searchTerm: search }],
       });
-      console.log(optionsArr, nextPageUrl);
 
       const options = optionsArr.map((option) => {
         return {

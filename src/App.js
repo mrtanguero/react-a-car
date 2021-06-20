@@ -42,15 +42,15 @@ const App = () => {
         <Route path="/login">
           <LoginForm />
         </Route>
-        <ProtectedRoute auth={auth} path="/unauthorized">
+        <Route path="/unauthorized">
           <Page403 />
-        </ProtectedRoute>
-        <ProtectedRoute auth={auth} path="/404">
+        </Route>
+        <Route path="/404">
           <Page404 />
-        </ProtectedRoute>
-        <ProtectedRoute auth={auth} path="*">
+        </Route>
+        <Route path="*">
           <Redirect to="/404" />
-        </ProtectedRoute>
+        </Route>
       </Switch>
       <Modal {...modalCtx.modalProps} />
     </MainLayout>
