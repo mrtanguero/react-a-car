@@ -90,7 +90,7 @@ export default function ReservationForm({
   );
 
   useEffect(() => {
-    if (reservationId && setAvailableEquipment.length !== 0) {
+    if (reservationId && availableEquipment.length !== 0) {
       reset({
         from_date: moment(reservationResponse?.data.from_date),
         to_date: moment(reservationResponse?.data.to_date),
@@ -104,8 +104,16 @@ export default function ReservationForm({
           `${equipment.id}-${equipment.pivot.quantity}`,
         ]);
       });
+    } else if (!reservationId && !disabled) {
+      setEquipmentData([]);
     }
-  }, [reservationId, reservationResponse, reset]);
+  }, [
+    availableEquipment.length,
+    disabled,
+    reservationId,
+    reservationResponse,
+    reset,
+  ]);
 
   useEffect(() => {
     if (vehicleData?.id) {
@@ -120,6 +128,7 @@ export default function ReservationForm({
   const createMutation = useMutation('createReservation', createReservation, {
     onSuccess: () => {
       queryClient.invalidateQueries('reservations');
+      queryClient.invalidateQueries('getReservation');
       closeModal();
       reset();
       message.success(t('successMessages.created'));
@@ -135,6 +144,7 @@ export default function ReservationForm({
     {
       onSuccess: () => {
         queryClient.invalidateQueries('reservations');
+        queryClient.invalidateQueries('getReservation');
         closeModal();
         reset();
         message.success(t('successMessages.updated'));
