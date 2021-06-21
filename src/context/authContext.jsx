@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+import { useHistory } from 'react-router-dom';
 import { getAccount } from '../services/account';
 
 const getJWTFromLocalStorage = () => {
@@ -19,11 +20,17 @@ const authContext = React.createContext({
 export const AuthProvider = (props) => {
   const [jwt, setJwt] = useState(getJWTFromLocalStorage());
   const [user, setUser] = useState(getUserFromLocalStorage() || null);
+  const history = useHistory();
 
   const { data: response, isSuccess } = useQuery('account', getAccount, {
-    refetchOnWindowFocus: false,
     enabled: !!jwt,
     retry: false,
+    onError: () => {
+      localStorage.clear();
+      setJwt('');
+      setUser(null);
+      history.replace('/login');
+    },
   });
 
   useEffect(() => {

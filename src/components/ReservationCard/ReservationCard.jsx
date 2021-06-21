@@ -2,12 +2,13 @@ import React, { useContext } from 'react';
 import { Card, Descriptions } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 import modalContext from '../../context/modalContext';
 import ReservationForm from '../ReservationForm/ReservationForm';
 
 export default function ReservationCard({ reservation }) {
   const modalCtx = useContext(modalContext);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const handleCancelModal = () => {
     modalCtx.setModalProps({ ...modalCtx.modalProps, visible: false });
@@ -32,7 +33,11 @@ export default function ReservationCard({ reservation }) {
   };
 
   return (
-    <Card hoverable onClick={() => handleCardClick(reservation.id)}>
+    <Card
+      hoverable
+      bordered={false}
+      onClick={() => handleCardClick(reservation.id)}
+    >
       <Descriptions
         title={reservation.vehicle.plate_no}
         column={1}
@@ -41,14 +46,20 @@ export default function ReservationCard({ reservation }) {
         contentStyle={{ width: '20ch' }}
         size="small"
       >
-        <Descriptions.Item label="Od">
-          {reservation.from_date}
+        <Descriptions.Item label={t('tableHeaders.from')}>
+          {moment(reservation.from_date).format(
+            i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'
+          )}
         </Descriptions.Item>
-        <Descriptions.Item label="Do">{reservation.to_date}</Descriptions.Item>
-        <Descriptions.Item label="Lok. preuzimanja">
+        <Descriptions.Item label={t('tableHeaders.to')}>
+          {moment(reservation.to_date).format(
+            i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'
+          )}
+        </Descriptions.Item>
+        <Descriptions.Item label={t('tableHeaders.rentLocation')}>
           {reservation.rent_location.name}
         </Descriptions.Item>
-        <Descriptions.Item label="Lok. vraćanja">
+        <Descriptions.Item label={t('tableHeaders.returnLocation')}>
           {reservation.return_location.name}
         </Descriptions.Item>
       </Descriptions>

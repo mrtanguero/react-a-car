@@ -52,7 +52,7 @@ export default function ReservationForm({
     watch,
     formState: { errors },
     handleSubmit,
-  } = useForm();
+  } = useForm({ client: null });
 
   const watchDates = watch(['from_date', 'to_date']);
 
@@ -119,6 +119,7 @@ export default function ReservationForm({
   useEffect(() => {
     if (vehicleData?.id) {
       reset({
+        client: null,
         from_date: moment(selectedDates[0]),
         to_date: moment(selectedDates[1]),
         vehicle_id: vehicleData.id,
@@ -131,7 +132,7 @@ export default function ReservationForm({
       queryClient.invalidateQueries('reservations');
       queryClient.invalidateQueries('getReservation');
       closeModal();
-      reset();
+      setEquipmentData([]);
       message.success(t('successMessages.created'));
     },
     onError: (error) => {
@@ -147,7 +148,7 @@ export default function ReservationForm({
         queryClient.invalidateQueries('reservations');
         queryClient.invalidateQueries('getReservation');
         closeModal();
-        reset();
+        setEquipmentData([]);
         message.success(t('successMessages.updated'));
       },
       onError: (error) => {
@@ -171,7 +172,6 @@ export default function ReservationForm({
     );
     setEquipmentData(noDuplicates);
   };
-
   const onSubmit = (data) => {
     if (reservationId) {
       updateMutation.mutate({
@@ -366,7 +366,12 @@ export default function ReservationForm({
           <Divider />
           <Form onSubmitCapture={handleSubmit(onSubmit)} layout="vertical">
             {!reservationId && (
-              <Form.Item label={t('formLabels.client')}>
+              <Form.Item
+                label={t('formLabels.client')}
+                help={errors['client'] && errors['client'].message}
+                validateStatus={errors['client'] && 'error'}
+                hasFeedback
+              >
                 <Controller
                   name="client"
                   control={control}
@@ -390,6 +395,7 @@ export default function ReservationForm({
                 />
               </Form.Item>
             )}
+
             <div className="reservation-form-container reservation-dates">
               <Form.Item
                 style={{ flex: 1, width: '100%' }}
@@ -565,9 +571,13 @@ export default function ReservationForm({
                         )
                       ) +
                         1) *
-                      +(
-                        vehicleData?.price_per_day ||
-                        reservationResponse?.data.vehicle.price_per_day
+                        +(
+                          vehicleData?.price_per_day ||
+                          reservationResponse?.data.vehicle.price_per_day
+                        ) +
+                      equipmentData.reduce(
+                        (sum, current) => sum + current.split('-')[1] * 5,
+                        0
                       )
                     : null}
                   €

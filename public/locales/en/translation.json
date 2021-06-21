@@ -32,6 +32,7 @@
     "confirmVehicleDelete": "Do you really want to delete this vehicle?",
     "confirmClientDelete": "Do you reall want to delete this client?",
     "confirmReservationDelete": "Do you really want to delete this reservation?",
+    "actionPermanentClient": "By deleting client you will delete all of his/her reservations too. This action can't be undone!",
     "actionPermanent": "This action can't be undone!"
   },
   "buttons": {
@@ -47,7 +48,7 @@
   "tableHeaders": {
     "clientName": "Name",
     "client": "Client",
-    "idDocNum": "ID document #",
+    "idDocNum": "ID document number",
     "phone": "Phone",
     "email": "Email",
     "country": "Country",
@@ -63,16 +64,19 @@
     "to": "To",
     "rentLocation": "Pickup location",
     "returnLocation": "Return location",
-    "totalPrice": "Total price"
+    "totalPrice": "Total price",
+    "firstReservationDate": "First reservation date",
+    "lastReservationDate": "Last reservation date"
   },
   "content": {
-    "welcomeMessage": "Welcome to the app, {{ name }}!",
+    "welcomeMessage": "Welcome to React-a-Car, {{ name }}!",
     "pickDatesAndType": "Pick dates and vehicle type",
     "uploadPhotos": "Click here or drag photos to this field",
     "uploadPhotosSecondary": "You can upload 1 or more photos at the same time (maximum 5)",
     "page403": "You are not authorized to view this page",
     "page404": "The page doesn't exist.",
-    "footer": "Created for Amplitudo Web Development Akademija ©2021"
+    "footer": "Created for Amplitudo Web Development Akademija ©2021",
+    "noReservations": "No reservations in this category"
   },
   "placeholders": {
     "clientName": "Enter client's full name",
@@ -149,7 +153,7 @@
     "maxNoOfSeats": "Vehicle can have maximum of 55 seats",
     "minPricePerDay": "Minimum allowed price of vehicle is {{ price }}EUR",
     "maxPricePerDay": "Maximum allowed price of vehicle is {{ price }}EUR",
-    "photoRequired": "You have to select at least one photo for the vehicle (all the old ones will automatically deleted)",
+    "photoRequired": "You have to select at least one photo for the vehicle (in case of update, all the old ones will be automatically deleted)",
     "clientHasReservations": "You can't delete a client with reservations",
     "vehicleHasReservations": "You can't delete a vehicle with reservations",
     "datesInvalid": "Date of reservation's beginning cannot be after the date of reservation's end"

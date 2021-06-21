@@ -1,9 +1,10 @@
-import { Card, Col, Collapse, PageHeader, Row, Typography } from 'antd';
 import React, { useContext, useState } from 'react';
+import './HomePage.css'
+import { Card, Col, Collapse, PageHeader, Row, Typography } from 'antd';
 import { useQuery } from 'react-query';
 import authContext from '../../context/authContext';
 import { getReservations } from '../../services/reservations';
-import { CaretRightOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, InboxOutlined } from '@ant-design/icons';
 import ReservationCard from '../../components/ReservationCard/ReservationCard';
 import { useTranslation } from 'react-i18next';
 
@@ -47,61 +48,136 @@ export default function HomePage() {
             )}
           >
             <Panel header={t('pageHeaders.upcomingReservations')} key="1">
-              <Row gutter={[16, 16]}>
-                {reservations
-                  .filter(
-                    (reservation) =>
-                      new Date(reservation.from_date).getTime() >
-                      new Date().setHours(0, 0, 0, 0)
-                  )
-                  .sort(
-                    (a, b) =>
-                      new Date(b.created_at).getTime() -
-                      new Date(a.created_at).getTime()
-                  )
-                  .map((reservation) => {
-                    return (
-                      <Col xs={24} md={12} lg={8} key={reservation.id}>
-                        <ReservationCard reservation={reservation} />
-                      </Col>
-                    );
-                  })}
+              <Row gutter={[16, 16]} style={{ width: '100%' }}>
+                {reservations.filter(
+                  (reservation) =>
+                    new Date(reservation.from_date).getTime() >
+                    new Date().setHours(0, 0, 0, 0)
+                ).length ? (
+                  reservations
+                    .filter(
+                      (reservation) =>
+                        new Date(reservation.from_date).getTime() >
+                        new Date().setHours(0, 0, 0, 0)
+                    )
+                    .sort(
+                      (a, b) =>
+                        new Date(b.created_at).getTime() -
+                        new Date(a.created_at).getTime()
+                    )
+                    .map((reservation) => {
+                      return (
+                        <Col xs={24} md={12} lg={8} key={reservation.id}>
+                          <ReservationCard reservation={reservation} />
+                        </Col>
+                      );
+                    })
+                ) : (
+                  <div style={{ width: '100%', textAlign: 'center' }}>
+                    <p
+                      style={{
+                        fontSize: '3rem',
+                        color: 'grey',
+                        marginBottom: 0,
+                      }}
+                    >
+                      <InboxOutlined />
+                    </p>
+                    <p style={{ color: 'grey' }}>
+                      {t('content.noReservations')}
+                    </p>
+                  </div>
+                )}
               </Row>
             </Panel>
             <Panel header={t('pageHeaders.currentReservations')} key="2">
-              <Row gutter={[16, 16]}>
-                {reservations
-                  .filter(
-                    (reservation) =>
-                      new Date(reservation.from_date).getTime() <=
-                        new Date().setHours(0, 0, 0, 0) &&
-                      new Date(reservation.to_date).getTime() >=
-                        new Date().setHours(0, 0, 0, 0)
-                  )
-                  .map((reservation) => {
-                    return (
-                      <Col xs={24} sm={12} lg={8} key={reservation.id}>
-                        <ReservationCard reservation={reservation} />
-                      </Col>
-                    );
-                  })}
+              <Row gutter={[16, 16]} style={{ width: '100%' }}>
+                {reservations.filter(
+                  (reservation) =>
+                    new Date(reservation.from_date).getTime() <=
+                      new Date().setHours(0, 0, 0, 0) &&
+                    new Date(reservation.to_date).getTime() >=
+                      new Date().setHours(0, 0, 0, 0)
+                ).length ? (
+                  reservations
+                    .filter(
+                      (reservation) =>
+                        new Date(reservation.from_date).getTime() <=
+                          new Date().setHours(0, 0, 0, 0) &&
+                        new Date(reservation.to_date).getTime() >=
+                          new Date().setHours(0, 0, 0, 0)
+                    )
+                    .sort(
+                      (a, b) =>
+                        new Date(b.created_at).getTime() -
+                        new Date(a.created_at).getTime()
+                    )
+                    .map((reservation) => {
+                      return (
+                        <Col xs={24} sm={12} lg={8} key={reservation.id}>
+                          <ReservationCard reservation={reservation} />
+                        </Col>
+                      );
+                    })
+                ) : (
+                  <div style={{ width: '100%', textAlign: 'center' }}>
+                    <p
+                      style={{
+                        fontSize: '3rem',
+                        color: 'grey',
+                        marginBottom: 0,
+                      }}
+                    >
+                      <InboxOutlined />
+                    </p>
+                    <p style={{ color: 'grey' }}>
+                      {t('content.noReservations')}
+                    </p>
+                  </div>
+                )}
               </Row>
             </Panel>
             <Panel header={t('pageHeaders.passedReservations')} key="3">
-              <Row gutter={[16, 16]}>
-                {reservations
-                  .filter(
-                    (reservation) =>
-                      new Date(reservation.to_date).getTime() <
-                      new Date().setHours(0, 0, 0, 0)
-                  )
-                  .map((reservation) => {
-                    return (
-                      <Col xs={24} sm={12} lg={8} key={reservation.id}>
-                        <ReservationCard reservation={reservation} />
-                      </Col>
-                    );
-                  })}
+              <Row gutter={[16, 16]} style={{ width: '100%' }}>
+                {reservations.filter(
+                  (reservation) =>
+                    new Date(reservation.to_date).getTime() <
+                    new Date().setHours(0, 0, 0, 0)
+                ).length ? (
+                  reservations
+                    .filter(
+                      (reservation) =>
+                        new Date(reservation.to_date).getTime() <
+                        new Date().setHours(0, 0, 0, 0)
+                    )
+                    .sort(
+                      (a, b) =>
+                        new Date(b.created_at).getTime() -
+                        new Date(a.created_at).getTime()
+                    )
+                    .map((reservation) => {
+                      return (
+                        <Col xs={24} sm={12} lg={8} key={reservation.id}>
+                          <ReservationCard reservation={reservation} />
+                        </Col>
+                      );
+                    })
+                ) : (
+                  <div style={{ width: '100%', textAlign: 'center' }}>
+                    <p
+                      style={{
+                        fontSize: '3rem',
+                        color: 'grey',
+                        marginBottom: 0,
+                      }}
+                    >
+                      <InboxOutlined />
+                    </p>
+                    <p style={{ color: 'grey' }}>
+                      {t('content.noReservations')}
+                    </p>
+                  </div>
+                )}
               </Row>
             </Panel>
           </Collapse>

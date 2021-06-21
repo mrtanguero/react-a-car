@@ -58,7 +58,9 @@ export const FormDataProvider = ({ children, vehicleId }) => {
   }, [vehicleId]);
 
   return (
-    <formDataContext.Provider value={{ data, setValues, setData }}>
+    <formDataContext.Provider
+      value={{ data, setValues, setData, setQueryIsEnabled }}
+    >
       <Spin spinning={isLoading}>{children}</Spin>
     </formDataContext.Provider>
   );

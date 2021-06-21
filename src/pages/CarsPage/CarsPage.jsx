@@ -187,6 +187,13 @@ export default function CarsPage() {
               dataIndex: 'remarks',
               key: 'remarks',
               width: 200,
+              ellipsis: true,
+              render: (_, record) => {
+                if (record.remarks) {
+                  return record.remarks;
+                }
+                return '-';
+              },
             },
             {
               title: t('tableHeaders.actions'),

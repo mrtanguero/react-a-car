@@ -37,7 +37,16 @@ export default function FirstStep({ setStep }) {
   }, [data, reset]);
 
   const onSubmit = (data) => {
-    setValues(data);
+    if (!data.car_type) {
+      setValues({
+        ...data,
+        car_type: {
+          name: carTypesResponse.data.data[data.car_type_id - 1].name,
+        },
+      });
+    } else {
+      setValues(data);
+    }
     setStep(1);
   };
 

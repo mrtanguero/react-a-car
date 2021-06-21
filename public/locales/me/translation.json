@@ -32,6 +32,7 @@
     "confirmVehicleDelete": "Da li stvarno želite da izbrišete ovo vozilo?",
     "confirmClientDelete": "Da li stvarno želite da izbrišete ovog klijenta?",
     "confirmReservationDelete": "Da li stvarno želite da izbrišete ovu rezervaciju? ",
+    "actionPermanentClient": "Brisanjem klijenta obrisaćete i sve njegove rezervacije i ova akcija ne može biti poništena",
     "actionPermanent": "Ova akcija ne može biti poništena!"
   },
   "buttons": {
@@ -47,7 +48,7 @@
   "tableHeaders": {
     "clientName": "Ime",
     "client": "Klijent",
-    "idDocNum": "Broj lk/pasoša",
+    "idDocNum": "Broj identifikacionog dokumenta (lična karta ili pasoš)",
     "phone": "Telefon",
     "email": "Email",
     "country": "Država",
@@ -57,22 +58,25 @@
     "year": "Godina",
     "seatsNum": "Sjedišta",
     "carType": "Tip vozila",
-    "remarks": "Dodatne primjedbe",
+    "remarks": "Napomena",
     "vehicle": "Vozilo",
     "from": "Od",
     "to": "Do",
     "rentLocation": "Lok. preuzimanja",
     "returnLocation": "Lok. vraćanja",
-    "totalPrice": "Ukupna cijena"
+    "totalPrice": "Ukupna cijena",
+    "firstReservationDate": "Datum prve rezervacije",
+    "lastReservationDate": "Datum poslednje rezervacije"
   },
   "content": {
-    "welcomeMessage": "Dobrodošli u aplikaciju, {{ name }}!",
+    "welcomeMessage": "Dobro došli u React-a-Car, {{ name }}!",
     "pickDatesAndType": "Odaberite datume i tip vozila",
     "uploadPhotos": "Kliknite ili prevucite fotografije u ovo polje",
     "uploadPhotosSecondary": "Podržano je aploadovanje jedne ili više fotografija istovremeno (maksimalno 5 ukupno)",
     "page403": "Vaše privilegije nisu dovoljne da pristupite ovoj stranici.",
     "page404": "Stranica ne postoji.",
-    "footer": "Kreirano za Amplitudo web development akademiju ©2021"
+    "footer": "Kreirano za Amplitudo web development akademiju ©2021",
+    "noReservations": "Nema rezervacija u ovoj kategoriji"
   },
   "placeholders": {
     "clientName": "Unesite ime i prezime klijenta",
@@ -93,7 +97,7 @@
     "productionYear": "Unesite godinu proizvodnje",
     "seatsNo": "Unesite broj sjedišta",
     "pricePerDay": "Unesite cijenu po danu",
-    "remarks": "Unesite dodatne primjedbe",
+    "remarks": "Unesite napomenu",
     "rentLocation": "Lokacija preuzimanja",
     "returnLocation": "Lokacija vraćanja",
     "equipment": "Unesite dodatnu opremu",
@@ -117,7 +121,7 @@
     "carType": "Tip vozila",
     "seatsNo": "Broj sjedišta",
     "pricePerDay": "Cijena po danu",
-    "remarks": "Dodatne primjedbe",
+    "remarks": "Napomena",
     "client": "Klijent",
     "vehicle": "Vozilo",
     "dates": "Datumi",
@@ -149,7 +153,7 @@
     "maxNoOfSeats": "Vozilo ne može imati više od 55 sjedišta",
     "minPricePerDay": "Minimalna cijena vozila po danu je {{ price }}EUR",
     "maxPricePerDay": "Maksimalna cijena vozila po danu je {{ price }}EUR",
-    "photoRequired": "Morate odabrati makar jednu fotografiju da biste nastavili dalje (sve stare će biti obrisane automatski)",
+    "photoRequired": "Morate odabrati makar jednu fotografiju da biste nastavili dalje (u slučaju ažuriranja, sve stare će biti obrisane automatski)",
     "clientHasReservations": "Ne možete obrisati klijenta koji ima rezervacije",
     "vehicleHasReservations": "Ne možete obrisati vozilo koje ima rezervacije",
     "datesInvalid": "Datum završetka rezervacije ne smije biti prije datuma početka rezervacije"

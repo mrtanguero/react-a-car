@@ -20,6 +20,7 @@ import {
   UserAddOutlined,
 } from '@ant-design/icons';
 import { deleteClient, getClients } from '../../services/clients';
+import moment from 'moment';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import { currentTotalLength } from '../../helper/functions';
 import ClientForm from '../../components/ClientForm/ClientForm';
@@ -33,7 +34,7 @@ export default function ClientsPage() {
   const [intersectionObserverTarget, setIntersectionObserverTarget] = useState(
     null
   );
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const mutation = useMutation((id) => deleteClient(id), {
     onSuccess: () => {
@@ -158,7 +159,7 @@ export default function ClientsPage() {
               title: t('tableHeaders.idDocNum'),
               dataIndex: 'identification_document_no',
               key: 'document-id',
-              width: 150,
+              width: 120,
               ellipsis: true,
             },
             {
@@ -174,10 +175,47 @@ export default function ClientsPage() {
               width: 200,
             },
             {
-              title: t('tableHeaders.country'),
-              dataIndex: ['country', 'name'],
-              key: 'country',
-              width: 150,
+              title: t('tableHeaders.firstReservationDate'),
+              dataIndex: 'date_of_first_reservation',
+              key: 'first-reservation',
+              width: 100,
+              render: (_, record) => {
+                if (record.date_of_first_reservation) {
+                  return moment(record.date_of_first_reservation).format(
+                    i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'
+                  );
+                }
+                return '-';
+              },
+              ellipsis: true,
+            },
+            {
+              title: t('tableHeaders.lastReservationDate'),
+              dataIndex: 'date_of_last_reservation',
+              key: 'last-reservation',
+              width: 110,
+              render: (_, record) => {
+                if (record.date_of_last_reservation) {
+                  return moment(record.date_of_last_reservation).format(
+                    i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'
+                  );
+                }
+                return '-';
+              },
+              ellipsis: true,
+            },
+            {
+              title: t('tableHeaders.remarks'),
+              dataIndex: 'remarks',
+              key: 'remarks',
+              width: 200,
+              ellipsis: true,
+              render: (_, record) => {
+                if (record.remarks) {
+                  return record.remarks;
+                }
+                return '-';
+              },
             },
             {
               title: t('tableHeaders.actions'),
@@ -212,7 +250,7 @@ export default function ClientsPage() {
                       confirm({
                         title: t('modals.confirmClientDelete'),
                         icon: <ExclamationCircleOutlined />,
-                        content: t('modals.actionPermanent'),
+                        content: t('modals.actionPermanentClient'),
                         okType: 'danger',
                         onOk() {
                           return mutation.mutateAsync(
