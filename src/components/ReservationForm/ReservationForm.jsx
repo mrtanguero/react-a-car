@@ -280,10 +280,14 @@ export default function ReservationForm({
                 contentStyle={{ color: 'grey' }}
               >
                 <Descriptions.Item label={t('formLabels.from')}>
-                  {reservationResponse?.data.from_date}
+                  {moment(reservationResponse?.data.from_date).format(
+                    i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'
+                  )}
                 </Descriptions.Item>
                 <Descriptions.Item label={t('formLabels.to')}>
-                  {reservationResponse?.data.to_date}
+                  {moment(reservationResponse?.data.to_date).format(
+                    i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'
+                  )}
                 </Descriptions.Item>
               </Descriptions>
             </div>

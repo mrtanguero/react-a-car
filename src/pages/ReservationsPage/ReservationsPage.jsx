@@ -27,6 +27,7 @@ import { currentTotalLength } from '../../helper/functions';
 import ReservationForm from '../../components/ReservationForm/ReservationForm';
 import { useHistory } from 'react-router-dom';
 import authContext from '../../context/authContext';
+import moment from 'moment';
 
 const { confirm } = Modal;
 
@@ -37,7 +38,7 @@ export default function ReservationsPage() {
     null
   );
   const auth = useContext(authContext);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const mutation = useMutation((id) => deleteReservation(id), {
     onSuccess: () => {
@@ -155,12 +156,22 @@ export default function ReservationsPage() {
               dataIndex: 'from_date',
               key: 'document-id',
               width: 100,
+              render: (_, record) => {
+                return moment(record.from_date).format(
+                  i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'
+                );
+              },
             },
             {
               title: t('tableHeaders.to'),
               dataIndex: 'to_date',
               key: 'email',
               width: 100,
+              render: (_, record) => {
+                return moment(record.to_date).format(
+                  i18n.language === 'me' ? 'DD.MM.YYYY.' : 'YYYY-MM-DD'
+                );
+              },
             },
             {
               title: t('tableHeaders.rentLocation'),
