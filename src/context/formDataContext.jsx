@@ -2,6 +2,7 @@ import { Spin } from 'antd';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
+import { BASE_URL } from '../config/config';
 import { getVehicle } from '../services/cars';
 
 const formDataContext = React.createContext({
@@ -34,7 +35,7 @@ export const FormDataProvider = ({ children, vehicleId }) => {
               return {
                 uid: photo.id,
                 name: `${photo.id}.${photo.photo.split('.').pop()}`,
-                thumbUrl: `http://127.0.0.1:8000/${photo.photo}`,
+                thumbUrl: `${BASE_URL}/${photo.photo}`,
               };
             }),
           },

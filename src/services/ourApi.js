@@ -1,8 +1,8 @@
 import axios from 'axios';
+import { BASE_URL } from '../config/config';
 
 const ourApi = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
-  // baseURL: 'http://akademija-api.proserver.me/api',
+  baseURL: `${BASE_URL}/api`,
 });
 
 export default ourApi;
