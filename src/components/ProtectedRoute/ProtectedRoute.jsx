@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 export default function ProtectedRoute({ auth, path, exact, children }) {
   const { pathname } = useLocation();
 
-  if (auth?.user?.roleId !== 1 && pathname !== '/') {
+  if (auth?.user && auth?.user?.roleId !== 1 && pathname !== '/') {
     return <Redirect to="/unauthorized" />;
   }
 

@@ -13,7 +13,7 @@ export default function ReviewStep({
   vehicleId,
   disabled,
 }) {
-  const { data, setData } = useContext(formDataContext);
+  const { data, setData, setQueryIsEnabled } = useContext(formDataContext);
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -36,7 +36,7 @@ export default function ReviewStep({
         queryClient.invalidateQueries('vehicles');
         queryClient.invalidateQueries('getVehicle');
         setStep(0);
-        setData({});
+        setQueryIsEnabled(true);
         closeModal();
         message.success(t('successMessages.updated'));
       },

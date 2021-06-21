@@ -213,7 +213,7 @@ export default function ReservationsPage() {
                       confirm({
                         title: t('modals.confirmReservationDelete'),
                         icon: <ExclamationCircleOutlined />,
-                        content: `This action is not reversible!`,
+                        content: t('modals.actionPermanent'),
                         okType: 'danger',
                         onOk() {
                           return mutation.mutateAsync(record.id);

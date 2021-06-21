@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { getCountries } from '../../services/countries';
 import { createClient, getClient, updateClient } from '../../services/clients';
 
+const { TextArea } = Input;
+
 const emailRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export default function ClientForm({ clientId, disabled, onCancel }) {
@@ -271,17 +273,43 @@ export default function ClientForm({ clientId, disabled, onCancel }) {
             )}
           />
         </Form.Item>
-
-        <div className="form-actions">
-          <Button
-            type="primary"
-            disabled={disabled}
-            loading={createMutation.isLoading || updateMutation.isLoading}
-            htmlType="submit"
+        {!(disabled && !clientsResponse?.data?.client?.remarks) && (
+          <Form.Item
+            label={t('formLabels.remarks')}
+            help={errors['remarks'] && errors['remarks'].message}
+            validateStatus={errors['remarks'] && 'error'}
+            hasFeedback
           >
-            {t('buttons.save')}
-          </Button>
-        </div>
+            <Controller
+              name="remarks"
+              control={control}
+              rules={{
+                maxLength: 255,
+              }}
+              render={({ field }) => (
+                <TextArea
+                  {...field}
+                  disabled={disabled}
+                  rows={4}
+                  placeholder={t('placeholders.remarks')}
+                />
+              )}
+            />
+          </Form.Item>
+        )}
+
+        {!disabled && (
+          <div className="form-actions">
+            <Button
+              type="primary"
+              disabled={disabled}
+              loading={createMutation.isLoading || updateMutation.isLoading}
+              htmlType="submit"
+            >
+              {t('buttons.save')}
+            </Button>
+          </div>
+        )}
       </Form>
     </Spin>
   );
