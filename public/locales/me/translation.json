@@ -76,7 +76,10 @@
     "page403": "Vaše privilegije nisu dovoljne da pristupite ovoj stranici.",
     "page404": "Stranica ne postoji.",
     "footer": "Kreirano za Amplitudo web development akademiju ©2021",
-    "noReservations": "Nema rezervacija u ovoj kategoriji"
+    "noReservations": "Nema rezervacija u ovoj kategoriji",
+    "vehicleDetails": "Detalji vozila",
+    "photos": "Fotografije",
+    "review": "Pregled"
   },
   "placeholders": {
     "clientName": "Unesite ime i prezime klijenta",

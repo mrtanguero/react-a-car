@@ -5,23 +5,25 @@ import FirstStep from './FirstStep/FirstStep';
 import SecondStep from './SecondStep/SecondStep';
 import ReviewStep from './ReviewStep/ReviewStep';
 import { FormDataProvider } from '../../context/formDataContext';
+import { useTranslation } from 'react-i18next';
 
 const { Step } = Steps;
 
 const steps = [
   {
-    title: 'Detalji vozila',
+    title: 'vehicleDetails',
   },
   {
-    title: 'Fotografije',
+    title: 'photos',
   },
   {
-    title: 'Pregled ',
+    title: 'review',
   },
 ];
 
 export default function MultiStepForm({ vehicleId, disabled, closeModal }) {
   const [current, setCurrent] = React.useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setCurrent(0);
@@ -33,7 +35,7 @@ export default function MultiStepForm({ vehicleId, disabled, closeModal }) {
         <>
           <Steps current={current} size="small">
             {steps.map((item) => (
-              <Step key={item.title} title={item.title} />
+              <Step key={item.title} title={t(`content.${item.title}`)} />
             ))}
           </Steps>
           <div className="steps-content" style={{ paddingTop: 20 }}>

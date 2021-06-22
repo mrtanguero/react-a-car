@@ -76,7 +76,10 @@
     "page403": "You are not authorized to view this page",
     "page404": "The page doesn't exist.",
     "footer": "Created for Amplitudo Web Development Akademija ©2021",
-    "noReservations": "No reservations in this category"
+    "noReservations": "No reservations in this category",
+    "vehicleDetails": "Vehicle details",
+    "photos": "Photos",
+    "review": "Review"
   },
   "placeholders": {
     "clientName": "Enter client's full name",

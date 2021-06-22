@@ -109,7 +109,14 @@ export default function MainHeader({
 
   return (
     <Header className="header">
-      <div className="logo">REACT-A-CAR</div>
+      <div
+        className="logo"
+        onClick={() => {
+          history.push('/');
+        }}
+      >
+        REACT-A-CAR
+      </div>
       <Menu
         theme="dark"
         mode="horizontal"
