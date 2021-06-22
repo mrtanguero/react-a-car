@@ -54,3 +54,30 @@
 .ant-page-header.ant-page-header-ghost {
   padding-top: 0;
 }
+
+/* SMALL SCREEN TABLES */
+
+.small-screen-table-descriptions {
+  padding-top: 8px;
+}
+
+.small-screen-table-buttons {
+  width: 100%;
+  justify-content: center;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.small-screen-table-button {
+  width: 100px;
+}
+
+@media screen and (max-width: 480px) {
+  .small-screen-table-descriptions th.ant-descriptions-item-label {
+    /* width: min-content !important; */
+    width: 45% !important;
+  }
+  .small-screen-table-descriptions td.ant-descriptions-item-content {
+    width: stretch !important;
+  }
+}
