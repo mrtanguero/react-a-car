@@ -116,8 +116,12 @@ span.ant-page-header-heading-extra {
 }
 
 @media screen and (max-width: 480px) {
+  main.ant-layout-content {
+    padding: 24px 8px !important;
+  }
+
   .ant-layout-header.header {
-    padding: 0px;
+    padding: 0 8px;
   }
 
   span.ant-page-header-heading-extra {
